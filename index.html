@@ -459,16 +459,20 @@ function motoreCalcolo(orders, parametri){
       }
     });
 
-    // ---- 4.3 CLIENTI PERSI (aveva comprato nei 12 mesi prima del periodo, non nel periodo) ----
-    const attivoPrimaDelPeriodo = storicoOrdini.some(o =>
-      o.monthIndex >= startIdx - finestraMesi && o.monthIndex < startIdx
-    );
-    if(attivoPrimaDelPeriodo && ordiniPeriodo.length === 0){
-      const ordiniPrima = storicoOrdini.filter(o=>o.monthIndex < startIdx);
-      const ultimo = ordiniPrima[ordiniPrima.length-1];
-      if(ultimo){
+    // ---- 4.3 CLIENTI PERSI (dormienti da almeno `finestraMesi` mesi pieni, misurato a fine periodo) ----
+    // Nota: non richiede piu' che il cliente fosse "attivo appena prima" del periodo. Si guarda
+    // l'ultimo ordine registrato fino alla fine del periodo (endIdx compreso) e si calcolano i mesi
+    // trascorsi da allora. Se un cliente dormiente viene RIATTIVATO durante il periodo, il suo ultimo
+    // ordine ricade dentro il periodo stesso, quindi automaticamente non risulta piu' "perso": va a
+    // sommarsi invece alle nuove attivazioni (vedi 4.1). Questo evita di penalizzare un agente due
+    // volte per lo stesso cliente e rende il saldo netto uno specchio reale del lavoro fatto nel periodo.
+    const ordiniFinoAFinePeriodo = storicoOrdini.filter(o => o.monthIndex <= endIdx);
+    if(ordiniFinoAFinePeriodo.length > 0){
+      const ultimo = ordiniFinoAFinePeriodo[ordiniFinoAFinePeriodo.length-1];
+      const mesiDormienza = endIdx - ultimo.monthIndex;
+      if(mesiDormienza >= finestraMesi){
         const ag = agente(ultimo.codAge, ultimo.nomeAgente);
-        ag.persi.push({ codCli, ultimoAcquisto: ultimo.monthIndex });
+        ag.persi.push({ codCli, ultimoAcquisto: ultimo.monthIndex, mesiDormienza });
       }
     }
   });
@@ -786,7 +790,7 @@ function apriDettaglioAgente(codAge){
     <div class="event-row">
       <div class="ev-left">
         <span class="ev-cli">Cliente ${p.codCli}</span>
-        <span class="ev-meta">ultimo acquisto ${meseLabel(p.ultimoAcquisto)}</span>
+        <span class="ev-meta">ultimo acquisto ${meseLabel(p.ultimoAcquisto)} · fermo da ${p.mesiDormienza} mesi</span>
       </div>
       <span class="event-tag tag-perso">Perso</span>
     </div>
