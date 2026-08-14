@@ -3,1286 +3,1014 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Canvass Mosnel — Calcolo Premi Agenti</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>Canvass Nuove Attivazioni — Mosnel</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 :root{
-  --bg:#F6FBF7;
-  --surface:#FFFFFF;
-  --surface-soft:#F0FAF3;
-  --ink:#0B2B1F;
-  --ink-soft:#4E6A5C;
-  --ink-faint:#8AA398;
-  --green:#00C853;
-  --green-deep:#00A344;
-  --green-pale:#E3F8EA;
-  --green-mint:#C8F5D6;
-  --green-line:#CFEFDA;
-  --gold:#E8B93D;
-  --red-soft:#D96C6C;
-  --red-pale:#FBEAEA;
-  --border:#DCEEE2;
-  --shadow-sm:0 2px 8px rgba(11,43,31,.06);
-  --shadow-md:0 10px 30px rgba(11,43,31,.10);
-  --radius:16px;
-  --radius-sm:10px;
+  --verde-vivo:#22c55e;
+  --verde-vivo-dark:#16a34a;
+  --verde-scuro:#0b3d24;
+  --verde-testo:#14532d;
+  --verde-tint:#e9fbf0;
+  --verde-tint2:#d3f7e0;
+  --oro:#d4a017;
+  --oro-tint:#fff6e0;
+  --rosso-tenue:#e5675f;
+  --rosso-tint:#fdeceb;
+  --crema:#fbfbf7;
+  --carta:#ffffff;
+  --bordo:#e3e8e2;
+  --testo:#1c231e;
+  --testo-mut:#657165;
+  --ombra:0 1px 2px rgba(20,50,30,.06), 0 6px 20px -8px rgba(20,50,30,.15);
+  --raggio:16px;
+  --raggio-sm:10px;
 }
 *{box-sizing:border-box;}
 html,body{margin:0;padding:0;}
 body{
-  background:
-    radial-gradient(1200px 500px at 90% -10%, rgba(0,200,83,.10), transparent 60%),
-    radial-gradient(900px 400px at -10% 0%, rgba(200,245,214,.5), transparent 55%),
-    var(--bg);
-  color:var(--ink);
-  font-family:'Inter',system-ui,sans-serif;
+  font-family:'Poppins',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  background:var(--crema);
+  color:var(--testo);
   min-height:100vh;
 }
-h1,h2,h3,.display{font-family:'Sora',system-ui,sans-serif;}
-::selection{background:var(--green-mint);}
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,700&display=swap');
+h1,h2,h3,.display{font-family:'Fraunces',serif;}
 
-/* ---------- top bar ---------- */
+/* ---------- layout shell ---------- */
+#app{max-width:1320px;margin:0 auto;padding:24px 28px 80px;}
 .topbar{
   display:flex;align-items:center;justify-content:space-between;
-  padding:18px 28px;background:var(--surface);
-  border-bottom:1px solid var(--border);
-  position:sticky;top:0;z-index:50;
+  padding:14px 0 22px;border-bottom:1px solid var(--bordo);margin-bottom:24px;
+  flex-wrap:wrap;gap:14px;
 }
 .brand{display:flex;align-items:center;gap:12px;}
 .brand-mark{
-  width:38px;height:38px;border-radius:11px;
-  background:linear-gradient(135deg,var(--green),var(--green-deep));
-  display:flex;align-items:center;justify-content:center;
-  box-shadow:var(--shadow-sm);
-  flex-shrink:0;
+  width:42px;height:42px;border-radius:12px;
+  background:linear-gradient(135deg,var(--verde-vivo),var(--verde-vivo-dark));
+  display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:18px;
+  box-shadow:var(--ombra);
 }
-.brand-mark svg{width:20px;height:20px;}
-.brand-text .t1{font-family:'Sora';font-weight:700;font-size:16.5px;letter-spacing:-.01em;line-height:1.1;}
-.brand-text .t2{font-size:12px;color:var(--ink-soft);}
-.top-actions{display:flex;gap:10px;align-items:center;}
-.pill-status{
-  font-size:12px;color:var(--ink-soft);background:var(--green-pale);
-  padding:6px 12px;border-radius:999px;display:flex;align-items:center;gap:6px;
-  border:1px solid var(--green-line);
-}
-.dot{width:7px;height:7px;border-radius:50%;background:var(--green);flex-shrink:0;}
+.brand-title{font-family:'Fraunces',serif;font-weight:700;font-size:20px;color:var(--verde-scuro);line-height:1.1;}
+.brand-sub{font-size:12.5px;color:var(--testo-mut);margin-top:2px;}
+.topbar-actions{display:flex;gap:10px;flex-wrap:wrap;}
 
-/* ---------- buttons ---------- */
+button{font-family:inherit;cursor:pointer;border:none;}
 .btn{
-  font-family:'Inter';font-weight:600;font-size:13.5px;
-  border:1px solid var(--border);background:var(--surface);
-  color:var(--ink);padding:10px 16px;border-radius:11px;
-  cursor:pointer;transition:.15s ease;display:inline-flex;align-items:center;gap:8px;
-  white-space:nowrap;
+  padding:10px 16px;border-radius:999px;font-size:13.5px;font-weight:600;
+  display:inline-flex;align-items:center;gap:6px;transition:transform .12s ease, box-shadow .12s ease;
 }
-.btn:hover{border-color:var(--green);transform:translateY(-1px);box-shadow:var(--shadow-sm);}
-.btn-primary{background:linear-gradient(135deg,var(--green),var(--green-deep));border:none;color:#fff;box-shadow:0 6px 18px rgba(0,200,83,.28);}
-.btn-primary:hover{filter:brightness(1.04);}
-.btn-ghost{background:transparent;border:1px solid transparent;color:var(--ink-soft);}
-.btn-ghost:hover{background:var(--green-pale);border-color:var(--green-line);}
+.btn:active{transform:scale(.97);}
+.btn-primary{background:var(--verde-vivo);color:#fff;box-shadow:0 4px 14px -4px rgba(34,197,94,.55);}
+.btn-primary:hover{background:var(--verde-vivo-dark);}
+.btn-ghost{background:var(--carta);color:var(--verde-testo);border:1px solid var(--bordo);}
+.btn-ghost:hover{border-color:var(--verde-vivo);}
 .btn-sm{padding:7px 12px;font-size:12.5px;}
-.btn svg{width:15px;height:15px;flex-shrink:0;}
-
-/* ---------- layout ---------- */
-.wrap{max-width:1320px;margin:0 auto;padding:28px;}
-.hide{display:none !important;}
+.btn-danger-ghost{background:var(--carta);color:var(--rosso-tenue);border:1px solid #f2d4d1;}
 
 /* ---------- import screen ---------- */
-.import-hero{
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  text-align:center;padding:70px 20px 40px;
-}
-.import-hero h1{font-size:32px;margin:0 0 8px;letter-spacing:-.02em;}
-.import-hero p{color:var(--ink-soft);font-size:15px;max-width:520px;margin:0 auto 34px;line-height:1.6;}
+.import-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;text-align:center;}
 .dropzone{
-  width:100%;max-width:560px;border:2px dashed var(--green-line);
-  border-radius:20px;padding:44px 30px;background:var(--surface);
-  cursor:pointer;transition:.2s ease;position:relative;
+  width:100%;max-width:640px;border:2px dashed #b9e6c8;border-radius:var(--raggio);
+  background:var(--carta);padding:56px 32px;transition:.15s;
 }
-.dropzone:hover,.dropzone.drag{border-color:var(--green);background:var(--green-pale);}
-.dropzone .icon{
-  width:56px;height:56px;border-radius:16px;margin:0 auto 16px;
-  background:var(--green-pale);display:flex;align-items:center;justify-content:center;
-}
-.dropzone .icon svg{width:26px;height:26px;color:var(--green-deep);}
-.dropzone .title{font-weight:700;font-size:15px;margin-bottom:4px;}
-.dropzone .sub{font-size:13px;color:var(--ink-soft);}
-#fileInput{display:none;}
-.import-note{margin-top:22px;font-size:12.5px;color:var(--ink-faint);max-width:520px;}
+.dropzone.drag{border-color:var(--verde-vivo);background:var(--verde-tint);}
+.dropzone-icon{font-size:44px;margin-bottom:10px;}
+.dropzone h2{margin:0 0 8px;font-size:23px;color:var(--verde-scuro);}
+.dropzone p{color:var(--testo-mut);font-size:14px;margin:0 0 20px;}
+.hidden{display:none !important;}
 
-.import-summary{max-width:640px;margin:0 auto;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:26px 28px;box-shadow:var(--shadow-sm);}
-.import-summary h3{margin:0 0 14px;font-size:16px;}
-.summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;}
-.summary-cell{background:var(--green-pale);border-radius:12px;padding:14px;text-align:center;}
-.summary-cell .num{font-family:'Sora';font-weight:800;font-size:22px;color:var(--green-deep);}
-.summary-cell .lbl{font-size:11px;color:var(--ink-soft);margin-top:2px;}
-.excl-list{font-size:12.5px;color:var(--ink-soft);border-top:1px dashed var(--border);padding-top:12px;}
-.excl-row{display:flex;justify-content:space-between;padding:3px 0;}
-.excl-row b{color:var(--red-soft);}
+.import-report{
+  max-width:640px;width:100%;text-align:left;background:var(--carta);border:1px solid var(--bordo);
+  border-radius:var(--raggio);padding:22px 24px;margin-top:18px;box-shadow:var(--ombra);
+}
+.import-report h3{margin:0 0 12px;font-size:15px;color:var(--verde-scuro);}
+.import-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px;}
+.import-stat{background:var(--verde-tint);border-radius:var(--raggio-sm);padding:12px;text-align:center;}
+.import-stat b{display:block;font-size:20px;color:var(--verde-testo);font-family:'Fraunces',serif;}
+.import-stat span{font-size:11px;color:var(--testo-mut);}
+.import-warn{font-size:12.5px;color:var(--testo-mut);background:#f7f7f2;border-radius:8px;padding:10px 12px;margin-top:6px;}
+.import-warn b{color:var(--rosso-tenue);}
 
 /* ---------- dashboard ---------- */
-.dash-header{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px;margin-bottom:22px;}
-.dash-header h1{font-size:26px;margin:0 0 4px;letter-spacing:-.02em;}
-.dash-header .sub{color:var(--ink-soft);font-size:13px;}
-.dash-actions{display:flex;gap:10px;}
-
-.cards-row{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:16px;margin-bottom:22px;}
-.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 22px;box-shadow:var(--shadow-sm);position:relative;overflow:hidden;}
-.card-hero{background:linear-gradient(135deg,var(--green) 0%,var(--green-deep) 100%);color:#fff;border:none;}
-.card-hero::after{
-  content:"";position:absolute;right:-30px;top:-30px;width:140px;height:140px;border-radius:50%;
-  background:rgba(255,255,255,.10);
+.controls-row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;margin-bottom:20px;}
+.periodo-pill{
+  display:flex;align-items:center;gap:6px;background:var(--carta);border:1px solid var(--bordo);
+  padding:8px 14px;border-radius:999px;font-size:13px;flex-wrap:wrap;
 }
-.card-hero::before{
-  content:"";position:absolute;right:20px;bottom:-40px;width:100px;height:100px;border-radius:50%;
-  background:rgba(255,255,255,.08);
+.periodo-pill select{
+  border:none;font-family:inherit;font-size:13px;color:var(--verde-testo);font-weight:600;background:transparent;
+  -webkit-appearance:none;appearance:none;cursor:pointer;padding:2px 4px;
 }
-.card .lbl{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;opacity:.85;}
-.card-hero .lbl{color:rgba(255,255,255,.85);}
-.card .val{font-family:'Sora';font-weight:800;font-size:30px;margin-top:8px;letter-spacing:-.02em;}
-.card:not(.card-hero) .val{color:var(--ink);}
-.card .sub2{font-size:11.5px;margin-top:6px;opacity:.8;}
-.card-hero .sub2{color:rgba(255,255,255,.85);}
-
-.toolbar{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:12px;flex-wrap:wrap;}
+.periodo-pill select:focus{outline:none;}
+.periodo-arrow{color:var(--testo-mut);}
 .search-box{
-  display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);
-  border-radius:11px;padding:9px 14px;min-width:260px;
+  display:flex;align-items:center;gap:8px;background:var(--carta);border:1px solid var(--bordo);
+  padding:8px 14px;border-radius:999px;min-width:230px;
 }
-.search-box svg{width:15px;height:15px;color:var(--ink-faint);flex-shrink:0;}
-.search-box input{border:none;outline:none;font-family:'Inter';font-size:13.5px;width:100%;background:transparent;color:var(--ink);}
+.search-box input{border:none;outline:none;font-family:inherit;font-size:13px;flex:1;background:transparent;}
 
-.table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-sm);}
-table{width:100%;border-collapse:collapse;font-size:13px;}
+.summary-cards{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:16px;margin-bottom:24px;}
+.card{background:var(--carta);border:1px solid var(--bordo);border-radius:var(--raggio);padding:20px 22px;box-shadow:var(--ombra);}
+.card-total{background:linear-gradient(135deg,var(--verde-vivo),var(--verde-vivo-dark));color:#fff;border:none;}
+.card-label{font-size:12px;letter-spacing:.04em;text-transform:uppercase;opacity:.85;font-weight:600;}
+.card-total .card-label{color:#eafff0;}
+.card:not(.card-total) .card-label{color:var(--testo-mut);}
+.card-value{font-family:'Fraunces',serif;font-weight:700;font-size:34px;margin-top:6px;}
+.card-total .card-value{font-size:44px;}
+.card-sub{font-size:12px;margin-top:6px;opacity:.8;}
+
+.table-wrap{background:var(--carta);border:1px solid var(--bordo);border-radius:var(--raggio);overflow:hidden;box-shadow:var(--ombra);}
+table{width:100%;border-collapse:collapse;font-size:13.5px;}
 thead th{
-  text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.03em;color:var(--ink-soft);
-  font-weight:700;padding:13px 14px;background:var(--surface-soft);border-bottom:1px solid var(--border);
-  cursor:pointer;user-select:none;white-space:nowrap;
+  text-align:left;padding:12px 14px;background:var(--verde-tint);color:var(--verde-testo);
+  font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.03em;cursor:pointer;white-space:nowrap;
+  position:sticky;top:0;
 }
-thead th:hover{color:var(--green-deep);}
-thead th .arrow{font-size:9px;margin-left:3px;opacity:.6;}
-tbody tr{border-bottom:1px solid var(--border);cursor:pointer;transition:.12s ease;}
-tbody tr:last-child{border-bottom:none;}
-tbody tr:hover{background:var(--green-pale);}
-tbody td{padding:12px 14px;vertical-align:middle;}
-.agent-name{font-weight:700;color:var(--ink);}
-.agent-zone{font-size:11.5px;color:var(--ink-soft);}
-.num-cell{font-variant-numeric:tabular-nums;font-weight:600;}
-.tot-cell{font-variant-numeric:tabular-nums;font-weight:800;font-family:'Sora';color:var(--green-deep);}
+thead th:hover{background:var(--verde-tint2);}
+tbody tr{border-top:1px solid var(--bordo);cursor:pointer;transition:background .1s;}
+tbody tr:hover{background:var(--verde-tint);}
+tbody td{padding:11px 14px;}
+.num{text-align:right;font-variant-numeric:tabular-nums;}
+.tot-cell{font-weight:700;color:var(--verde-testo);}
 .saldo-badge{
-  display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:700;
+  display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:999px;font-size:12px;font-weight:600;
 }
-.saldo-pos{background:var(--green-pale);color:var(--green-deep);}
-.saldo-neg{background:var(--red-pale);color:var(--red-soft);}
-.saldo-zero{background:#F1F1F1;color:var(--ink-faint);}
-.badge-dot{width:6px;height:6px;border-radius:50%;background:currentColor;}
-.empty-row td{text-align:center;color:var(--ink-faint);padding:40px;font-size:13px;}
+.saldo-pos{background:var(--verde-tint2);color:var(--verde-testo);}
+.saldo-neg{background:var(--rosso-tint);color:var(--rosso-tenue);}
+.saldo-zero{background:#f1f1ec;color:var(--testo-mut);}
+.dot{width:7px;height:7px;border-radius:50%;display:inline-block;}
+.dot-pos{background:var(--verde-vivo);}
+.dot-neg{background:var(--rosso-tenue);}
+.dot-zero{background:#b9b9ae;}
 
-/* ---------- modal / panel ---------- */
+/* ---------- modal ---------- */
 .overlay{
-  position:fixed;inset:0;background:rgba(11,43,31,.35);backdrop-filter:blur(2px);
-  z-index:100;display:flex;justify-content:flex-end;
+  position:fixed;inset:0;background:rgba(11,61,36,.35);backdrop-filter:blur(2px);
+  display:flex;align-items:flex-start;justify-content:center;padding:40px 20px;z-index:50;overflow-y:auto;
 }
-.overlay.center{align-items:center;justify-content:center;}
-.panel{
-  background:var(--surface);width:520px;max-width:92vw;height:100%;overflow-y:auto;
-  box-shadow:-10px 0 40px rgba(0,0,0,.15);
-  animation:slideIn .22s ease;
+.modal{background:var(--carta);border-radius:20px;max-width:760px;width:100%;box-shadow:0 20px 60px -12px rgba(11,61,36,.35);}
+.modal-header{display:flex;align-items:flex-start;justify-content:space-between;padding:24px 26px 16px;border-bottom:1px solid var(--bordo);}
+.modal-header h2{margin:0;font-size:21px;color:var(--verde-scuro);}
+.modal-header p{margin:4px 0 0;font-size:13px;color:var(--testo-mut);}
+.modal-close{background:var(--verde-tint);color:var(--verde-testo);width:32px;height:32px;border-radius:50%;font-size:16px;}
+.modal-body{padding:20px 26px 26px;max-height:70vh;overflow-y:auto;}
+.modal-section{margin-bottom:22px;}
+.modal-section h4{font-size:12.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--testo-mut);margin:0 0 10px;}
+.event-row{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:10px;background:#f8faf7;margin-bottom:6px;font-size:13.5px;}
+.event-row .ev-left{display:flex;flex-direction:column;}
+.event-row .ev-cli{font-weight:600;}
+.event-row .ev-meta{font-size:11.5px;color:var(--testo-mut);}
+.event-tag{font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:6px;text-transform:uppercase;letter-spacing:.03em;}
+.tag-attivazione{background:var(--verde-tint2);color:var(--verde-testo);}
+.tag-gettone{background:var(--oro-tint);color:var(--oro);}
+.tag-perso{background:var(--rosso-tint);color:var(--rosso-tenue);}
+.ev-value{font-weight:700;font-variant-numeric:tabular-nums;}
+.empty-note{font-size:13px;color:var(--testo-mut);font-style:italic;padding:8px 0;}
+.modal-total{
+  display:flex;justify-content:space-between;align-items:center;background:var(--verde-scuro);color:#fff;
+  border-radius:14px;padding:16px 20px;margin-top:6px;
 }
-@keyframes slideIn{from{transform:translateX(30px);opacity:0;}to{transform:translateX(0);opacity:1;}}
-.modal-box{
-  background:var(--surface);width:600px;max-width:92vw;max-height:88vh;overflow-y:auto;
-  border-radius:20px;box-shadow:var(--shadow-md);animation:popIn .18s ease;
-}
-@keyframes popIn{from{transform:scale(.97);opacity:0;}to{transform:scale(1);opacity:1;}}
-.panel-header,.modal-header{
-  display:flex;justify-content:space-between;align-items:center;padding:20px 24px;
-  border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--surface);z-index:2;
-}
-.panel-header h2,.modal-header h2{font-size:17px;margin:0;}
-.close-btn{
-  width:30px;height:30px;border-radius:9px;border:1px solid var(--border);background:var(--surface);
-  display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--ink-soft);
-}
-.close-btn:hover{background:var(--red-pale);color:var(--red-soft);border-color:var(--red-soft);}
-.panel-body,.modal-body{padding:22px 24px;}
+.modal-total b{font-family:'Fraunces',serif;font-size:26px;}
 
-/* detail panel */
-.detail-agent-name{font-family:'Sora';font-weight:800;font-size:20px;margin-bottom:2px;}
-.detail-agent-sub{font-size:12.5px;color:var(--ink-soft);margin-bottom:18px;}
-.detail-totals{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:22px;}
-.dt-cell{background:var(--green-pale);border-radius:12px;padding:12px;text-align:center;}
-.dt-cell .num{font-family:'Sora';font-weight:800;font-size:17px;color:var(--green-deep);}
-.dt-cell .lbl{font-size:10.5px;color:var(--ink-soft);margin-top:2px;}
-.section-label{
-  font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-soft);
-  margin:20px 0 8px;display:flex;align-items:center;gap:8px;
-}
-.section-label::after{content:"";flex:1;height:1px;background:var(--border);}
-.event-row{
-  display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--border);
-  font-size:13px;
-}
-.event-row:last-child{border-bottom:none;}
-.ev-left{display:flex;flex-direction:column;gap:2px;}
-.ev-client{font-weight:700;}
-.ev-meta{font-size:11.5px;color:var(--ink-soft);}
-.tag{font-size:10.5px;font-weight:700;padding:3px 8px;border-radius:6px;text-transform:uppercase;letter-spacing:.02em;}
-.tag-attiv{background:var(--green-pale);color:var(--green-deep);}
-.tag-prestige{background:#FFF6DE;color:#9A7A0C;}
-.tag-perso{background:var(--red-pale);color:var(--red-soft);}
-.ev-amount{font-weight:800;font-family:'Sora';color:var(--green-deep);white-space:nowrap;}
-.grand-total{
-  margin-top:22px;padding:16px 18px;border-radius:14px;
-  background:linear-gradient(135deg,var(--green),var(--green-deep));color:#fff;
-  display:flex;justify-content:space-between;align-items:center;
-}
-.grand-total .lbl{font-size:12px;opacity:.85;}
-.grand-total .val{font-family:'Sora';font-weight:800;font-size:22px;}
-
-/* params modal */
-.param-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
-.param-field{display:flex;flex-direction:column;gap:6px;}
-.param-field.full{grid-column:1/-1;}
-.param-field label{font-size:12px;font-weight:600;color:var(--ink-soft);}
-.param-field .hint{font-size:10.5px;color:var(--ink-faint);}
+/* ---------- parametri modal ---------- */
+.param-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 18px;}
+.param-field{display:flex;flex-direction:column;gap:5px;}
+.param-field label{font-size:12px;color:var(--testo-mut);font-weight:600;}
+.param-field .hint{font-size:10.5px;color:#9aa39a;}
 .param-field input{
-  border:1px solid var(--border);border-radius:10px;padding:9px 12px;font-family:'Inter';font-size:13.5px;
-  outline:none;transition:.15s;
+  border:1px solid var(--bordo);border-radius:10px;padding:9px 11px;font-family:inherit;font-size:14px;
+  background:var(--crema);
 }
-.param-field input:focus{border-color:var(--green);box-shadow:0 0 0 3px var(--green-pale);}
-.date-row{display:flex;gap:10px;}
-.modal-footer{
-  display:flex;justify-content:space-between;padding:16px 24px;border-top:1px solid var(--border);
-  position:sticky;bottom:0;background:var(--surface);
-}
+.param-field input:focus{outline:none;border-color:var(--verde-vivo);background:#fff;}
+.param-divider{grid-column:1/-1;border-top:1px solid var(--bordo);margin:6px 0;padding-top:10px;font-size:12px;font-weight:700;color:var(--verde-testo);text-transform:uppercase;letter-spacing:.03em;}
 
-/* loading */
-.loading-overlay{
-  position:fixed;inset:0;background:rgba(255,255,255,.85);z-index:200;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
-}
-.spinner{width:38px;height:38px;border-radius:50%;border:4px solid var(--green-pale);border-top-color:var(--green);animation:spin .8s linear infinite;}
-@keyframes spin{to{transform:rotate(360deg);}}
-.loading-overlay .txt{font-size:13.5px;color:var(--ink-soft);font-weight:600;}
-
-/* toast */
-.toast{
-  position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
-  background:var(--ink);color:#fff;padding:12px 20px;border-radius:12px;font-size:13px;font-weight:600;
-  box-shadow:var(--shadow-md);z-index:300;display:flex;align-items:center;gap:10px;opacity:0;pointer-events:none;
-  transition:.25s ease;
-}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(-6px);}
-.toast svg{width:15px;height:15px;color:var(--green);flex-shrink:0;}
-
-@media(max-width:860px){
-  .cards-row{grid-template-columns:1fr 1fr;}
-  .summary-grid{grid-template-columns:1fr 1fr;}
-  .param-grid{grid-template-columns:1fr;}
-  table{font-size:12px;}
-}
+.footer-note{text-align:center;color:var(--testo-mut);font-size:11.5px;margin-top:36px;}
 </style>
 </head>
 <body>
+<div id="app">
 
-<div class="topbar">
-  <div class="brand">
-    <div class="brand-mark">
-      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C12 2 6 7 6 12.5C6 16.09 8.69 19 12 19C15.31 19 18 16.09 18 12.5C18 7 12 2 12 2Z" stroke="white" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 19V22" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg>
-    </div>
-    <div class="brand-text">
-      <div class="t1">Canvass Mosnel</div>
-      <div class="t2">Calcolo premi rete agenti</div>
-    </div>
-  </div>
-  <div class="top-actions">
-    <div class="pill-status hide" id="dataStatusPill"><span class="dot"></span><span id="dataStatusText"></span></div>
-    <button class="btn btn-ghost hide" id="btnParams">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-      Parametri
-    </button>
-    <button class="btn btn-ghost hide" id="btnNewImport">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 3v6h-6"/></svg>
-      Nuovo import
-    </button>
-    <button class="btn btn-primary hide" id="btnExport">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      Esporta
-    </button>
-  </div>
-</div>
-
-<!-- ============ IMPORT SCREEN ============ -->
-<div class="wrap" id="screenImport">
-  <div class="import-hero">
-    <h1>Carica i dati di vendita</h1>
-    <p>Importa l'estrazione Excel per calcolare in automatico i premi "Canvass Nuove Attivazioni" per tutta la rete agenti.</p>
-    <div class="dropzone" id="dropzone">
-      <div class="icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-      </div>
-      <div class="title">Trascina qui il file Excel</div>
-      <div class="sub">oppure clicca per selezionarlo — .xlsx, .xls</div>
-      <input type="file" id="fileInput" accept=".xlsx,.xls">
-    </div>
-    <div class="import-note">Colonne attese: Cod_Cli, Nome_Agente, Cod_Age, Anno, Mese, Num_Doc, Descr_Merceologica, Qta_Pezzi, Importo_Netto, Regione, Stato. I dati restano nel browser: nessun upload verso server esterni.</div>
-  </div>
-
-  <div class="import-summary hide" id="importSummaryBox">
-    <h3>Import completato</h3>
-    <div class="summary-grid">
-      <div class="summary-cell"><div class="num" id="sumRows">–</div><div class="lbl">righe valide</div></div>
-      <div class="summary-cell"><div class="num" id="sumAgents">–</div><div class="lbl">agenti</div></div>
-      <div class="summary-cell"><div class="num" id="sumClients">–</div><div class="lbl">clienti</div></div>
-      <div class="summary-cell"><div class="num" id="sumRange">–</div><div class="lbl">periodo dati</div></div>
-    </div>
-    <div class="excl-list" id="exclList"></div>
-    <div style="margin-top:18px;text-align:center;">
-      <button class="btn btn-primary" id="btnGoDashboard">Vai alla dashboard →</button>
-    </div>
-  </div>
-</div>
-
-<!-- ============ DASHBOARD SCREEN ============ -->
-<div class="wrap hide" id="screenDashboard">
-  <div class="dash-header">
-    <div>
-      <h1>Dashboard rete</h1>
-      <div class="sub" id="periodLabel">—</div>
-    </div>
-  </div>
-
-  <div class="cards-row">
-    <div class="card card-hero">
-      <div class="lbl">Totale da liquidare</div>
-      <div class="val" id="cardTotale">€ 0</div>
-      <div class="sub2" id="cardTotaleSub">— agenti con premi maturati</div>
-    </div>
-    <div class="card">
-      <div class="lbl">Premi attivazione</div>
-      <div class="val" id="cardAttiv">€ 0</div>
-      <div class="sub2" id="cardAttivSub">— nuovi clienti qualificati</div>
-    </div>
-    <div class="card">
-      <div class="lbl">Gettoni prestige</div>
-      <div class="val" id="cardPrestige">€ 0</div>
-      <div class="sub2" id="cardPrestigeSub">— primi inserimenti EBB/Parosé</div>
-    </div>
-    <div class="card">
-      <div class="lbl">Bonus retention</div>
-      <div class="val" id="cardRetention">€ 0</div>
-      <div class="sub2" id="cardRetentionSub">— agenti con saldo netto positivo</div>
-    </div>
-  </div>
-
-  <div class="toolbar">
-    <div class="search-box">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <input type="text" id="searchInput" placeholder="Cerca agente o zona…">
-    </div>
-    <div class="sub" style="font-size:12px;color:var(--ink-soft);" id="tableCount"></div>
-  </div>
-
-  <div class="table-wrap">
-    <table>
-      <thead>
-        <tr>
-          <th data-key="nome">Agente <span class="arrow"></span></th>
-          <th data-key="zona">Zona <span class="arrow"></span></th>
-          <th data-key="nuovi">Nuovi qualif. <span class="arrow"></span></th>
-          <th data-key="persi">Persi <span class="arrow"></span></th>
-          <th data-key="saldo">Saldo netto <span class="arrow"></span></th>
-          <th data-key="attiv">Premi attiv. <span class="arrow"></span></th>
-          <th data-key="prestige">Gettoni <span class="arrow"></span></th>
-          <th data-key="retention">Retention <span class="arrow"></span></th>
-          <th data-key="totale">Totale <span class="arrow">▼</span></th>
-        </tr>
-      </thead>
-      <tbody id="agentsTbody"></tbody>
-    </table>
-  </div>
-</div>
-
-<!-- ============ DETAIL PANEL ============ -->
-<div class="overlay hide" id="detailOverlay">
-  <div class="panel">
-    <div class="panel-header">
-      <h2>Dettaglio agente</h2>
-      <div class="close-btn" id="closeDetail">✕</div>
-    </div>
-    <div class="panel-body" id="detailBody"></div>
-  </div>
-</div>
-
-<!-- ============ PARAMS MODAL ============ -->
-<div class="overlay center hide" id="paramsOverlay">
-  <div class="modal-box">
-    <div class="modal-header">
-      <h2>Parametri piano incentivi</h2>
-      <div class="close-btn" id="closeParams">✕</div>
-    </div>
-    <div class="modal-body">
-      <div class="param-grid">
-        <div class="param-field">
-          <label>Premio 3 referenze (€)</label>
-          <input type="number" id="p_soglia3" step="1">
-        </div>
-        <div class="param-field">
-          <label>Premio 4 referenze (€)</label>
-          <input type="number" id="p_soglia4" step="1">
-        </div>
-        <div class="param-field">
-          <label>Premio 5+ referenze (€)</label>
-          <input type="number" id="p_soglia5" step="1">
-        </div>
-        <div class="param-field">
-          <label>Gettone prestige (€)</label>
-          <input type="number" id="p_gettone" step="1">
-          <div class="hint">Primo inserimento EBB o Parosé sul cliente</div>
-        </div>
-        <div class="param-field">
-          <label>Retention per cliente netto (€)</label>
-          <input type="number" id="p_retention" step="1">
-        </div>
-        <div class="param-field">
-          <label>Referenze minime per qualificare</label>
-          <input type="number" id="p_refMin" step="1">
-        </div>
-        <div class="param-field">
-          <label>Casse minime per referenza valida</label>
-          <input type="number" id="p_casseMin" step="1">
-          <div class="hint">1 cassa = 6 bottiglie</div>
-        </div>
-        <div class="param-field">
-          <label>Finestra cliente nuovo/perso (mesi)</label>
-          <input type="number" id="p_finestra" step="1">
-        </div>
-        <div class="param-field full">
-          <label>Ordine minimo per qualificare (casse totali)</label>
-          <input type="number" id="p_ordineMin" step="1">
-          <div class="hint">Default 8 = 7+1 (7 casse pagate + 1 omaggio)</div>
-        </div>
-        <div class="param-field full">
-          <label>Periodo campagna</label>
-          <div class="date-row">
-            <input type="date" id="p_dataInizio" style="flex:1;">
-            <input type="date" id="p_dataFine" style="flex:1;">
-          </div>
-        </div>
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-mark">M</div>
+      <div>
+        <div class="brand-title">Canvass Nuove Attivazioni</div>
+        <div class="brand-sub">Calcolo premi rete agenti — Mosnel</div>
       </div>
     </div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost" id="btnResetParams">Ripristina valori di default</button>
-      <button class="btn btn-primary" id="btnApplyParams">Applica e ricalcola</button>
-    </div>
+    <div class="topbar-actions" id="topbarActions"></div>
   </div>
+
+  <div id="screenImport"></div>
+  <div id="screenDashboard" class="hidden"></div>
+
 </div>
 
-<div class="loading-overlay hide" id="loadingOverlay">
-  <div class="spinner"></div>
-  <div class="txt" id="loadingText">Elaborazione dati…</div>
-</div>
-
-<div class="toast" id="toast">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-  <span id="toastText"></span>
-</div>
+<div id="modalRoot"></div>
 
 <script>
 /* =========================================================================
-   CANVASS MOSNEL — motore di calcolo premi "Canvass Nuove Attivazioni"
-   Tutta la logica di business è commentata nei punti in cui applica le
-   regole del piano incentivi, per poter essere verificata e corretta in
-   futuro senza doverla rileggere da zero.
+   CANVASS NUOVE ATTIVAZIONI — motore di calcolo premi rete agenti Mosnel
+   Un solo file HTML, nessun backend, nessuna dipendenza dati esterna.
    ========================================================================= */
 
-const STORAGE_KEY = 'mosnel_canvass_v1';
-
-const DEFAULT_PARAMS = {
-  soglia3: 40,
-  soglia4: 50,
-  soglia5: 60,
-  gettone: 40,
-  retention: 50,
-  refMin: 3,
-  casseMin: 1,
+/* ---------------- 1. PARAMETRI DI DEFAULT (piano incentivi) ---------------- */
+const PARAMETRI_DEFAULT = {
+  premio3: 40,
+  premio4: 50,
+  premio5: 60,
+  gettonePrestige: 40,
+  retentionValore: 50,
+  referenzeMinime: 3,
+  casseMinimePerReferenza: 1,   // 1 cassa = 6 bottiglie
   finestraMesi: 12,
-  ordineMin: 8 // 7+1
+  ordineMinimoCasse: 8,         // 7+1 = 7 pagate + 1 omaggio = 8 casse totali
+  periodoInizio: null,          // 'YYYY-MM', calcolato al primo avvio
+  periodoFine: null
 };
 
-function defaultPeriod(rows){
-  // Individua l'anno più recente presente nei dati per proporre un default
-  // sensato (1 settembre – 31 dicembre di quell'anno).
-  let maxY = new Date().getFullYear();
-  if(rows && rows.length){
-    maxY = Math.max(...rows.map(r=>r.Anno));
-  }
-  return { start:`${maxY}-09-01`, end:`${maxY}-12-31` };
+function defaultPeriodo(){
+  const now = new Date();
+  const anno = now.getFullYear();
+  return { inizio: anno + '-09', fine: anno + '-12' };
 }
 
-let state = {
-  rawRows: [],          // righe grezze post-filtro {Cod_Cli, Cod_Age, Nome_Agente, Anno, Mese, Num_Doc, Descr_Merceologica, Qta_Pezzi, Importo_Netto, Regione, Stato}
-  meta: null,            // info import (conteggi, esclusioni, range date)
-  params: {...DEFAULT_PARAMS},
-  period: null,
-  results: null,         // output di computeResults()
-  sortKey: 'totale',
+/* ---------------- 2. STATO GLOBALE ---------------- */
+let STATE = {
+  rows: [],            // righe grezze filtrate, una per riga Excel
+  orders: [],          // righe aggregate per ordine (Cod_Cli + Num_Doc)
+  importReport: null,  // { totRighe, scartate, agenti, clienti, dataMin, dataMax, motivi }
+  parametri: JSON.parse(JSON.stringify(PARAMETRI_DEFAULT)),
+  risultati: [],        // output motore di calcolo, un elemento per agente
+  sortCol: 'totale',
   sortDir: 'desc',
-  filterText: ''
+  search: ''
 };
 
-/* ---------------------------- UTIL DATE ---------------------------- */
-// Rappresentiamo le date-ordine come {y,m} (anno, mese 1-12). Non avendo il
-// giorno esatto nel gestionale, ogni ordine viene collocato al giorno 1 del
-// mese per i confronti di finestra mobile.
-function ymKey(y,m){ return y*100+m; }
-function ymCompare(a,b){ return ymKey(a.y,a.m)-ymKey(b.y,b.m); }
-function addMonths(y,m,delta){
-  let total = (y*12+(m-1))+delta;
-  let ny = Math.floor(total/12);
-  let nm = (total%12)+1;
-  return {y:ny,m:nm};
-}
-function dateToYM(dateStr){
-  const d = new Date(dateStr+'T00:00:00');
-  return {y:d.getFullYear(), m:d.getMonth()+1};
-}
-function ymInRange(ym, start, end){
-  const k = ymKey(ym.y,ym.m);
-  return k>=ymKey(start.y,start.m) && k<=ymKey(end.y,end.m);
-}
-function fmtYM(ym){
-  const mesi=['gen','feb','mar','apr','mag','giu','lug','ago','set','ott','nov','dic'];
-  return `${mesi[ym.m-1]} ${ym.y}`;
-}
-function fmtEUR(n){
-  return '€ ' + Math.round(n).toLocaleString('it-IT');
-}
+const LS_KEY = 'canvass_mosnel_v1';
 
-/* ---------------------------- IMPORT & FILTRI ---------------------------- */
-const EXCLUDED_AGENT_CODES = [999,99,95];
-const EXCLUDED_AGENT_NAME_PATTERNS = ['PROVA','WINE CLUB'];
-const EXCLUDED_REFS = ['FONTECOLO'];
+/* ---------------- 3. IMPORT & FILTRI EXCEL ---------------- */
 
-function normalizeHeader(h){ return String(h||'').trim(); }
+function normalizza(s){ return (s===undefined||s===null) ? '' : String(s).trim(); }
 
-function parseWorkbookRows(wb){
-  const sheet = wb.Sheets[wb.SheetNames[0]];
-  const json = XLSX.utils.sheet_to_json(sheet, {defval:''});
-  return json;
-}
-
-function applyFilters(rawJson){
-  const kept = [];
-  const excluded = { stato:0, codAge:0, nomeAgente:0, referenza:0 };
-  for(const r0 of rawJson){
-    // normalizza chiavi (tolleranza a spazi nelle intestazioni)
-    const r = {};
-    for(const k in r0){ r[normalizeHeader(k)] = r0[k]; }
-
-    const stato = String(r['Stato']||'').trim();
-    if(stato !== '_ITALIA'){ excluded.stato++; continue; }
-
-    const codAge = parseInt(r['Cod_Age'], 10);
-    if(EXCLUDED_AGENT_CODES.includes(codAge)){ excluded.codAge++; continue; }
-
-    const nomeAgente = String(r['Nome_Agente']||'').toUpperCase();
-    if(EXCLUDED_AGENT_NAME_PATTERNS.some(p=>nomeAgente.includes(p))){ excluded.nomeAgente++; continue; }
-
-    const ref = String(r['Descr_Merceologica']||'').trim();
-    if(!ref || EXCLUDED_REFS.some(x=>ref.toUpperCase()===x)){ excluded.referenza++; continue; }
-
-    const anno = parseInt(r['Anno'],10);
-    const mese = parseInt(r['Mese'],10);
-    if(!anno || !mese){ excluded.referenza++; continue; }
-
-    kept.push({
-      Cod_Cli: String(r['Cod_Cli']||'').trim(),
-      Cod_Age: codAge,
-      Nome_Agente: String(r['Nome_Agente']||'').trim(),
-      Anno: anno,
-      Mese: mese,
-      Num_Doc: String(r['Num_Doc']||'').trim(),
-      Descr_Merceologica: ref,
-      Qta_Pezzi: parseFloat(r['Qta_Pezzi'])||0,
-      Importo_Netto: parseFloat(r['Importo_Netto'])||0,
-      Regione: String(r['Regione']||'').trim()
-    });
-  }
-  return {kept, excluded, totalRaw: rawJson.length};
-}
-
-function buildMeta(kept, excluded, totalRaw){
-  const agents = new Set(kept.map(r=>r.Cod_Age));
-  const clients = new Set(kept.map(r=>r.Cod_Cli));
-  let minY=Infinity,maxY=-Infinity,minM=0,maxM=0;
-  kept.forEach(r=>{
-    const k = ymKey(r.Anno,r.Mese);
-    if(k < ymKey(minY===Infinity?r.Anno:minY, minM||r.Mese)){}
-  });
-  // range date min/max
-  let minYM=null, maxYM=null;
-  kept.forEach(r=>{
-    const cur={y:r.Anno,m:r.Mese};
-    if(!minYM || ymCompare(cur,minYM)<0) minYM=cur;
-    if(!maxYM || ymCompare(cur,maxYM)>0) maxYM=cur;
-  });
-  return {
-    totalRaw, rowsKept: kept.length,
-    agentCount: agents.size, clientCount: clients.size,
-    minYM, maxYM, excluded
-  };
-}
-
-/* ---------------------------- MOTORE DI CALCOLO ---------------------------- */
-/*
-  computeResults(rows, params, period)
-  Implementa, passo per passo, la logica descritta nel piano "Canvass Nuove
-  Attivazioni":
-    1. Ricostruzione ordini per cliente (tutto lo storico).
-    2. Determinazione cliente "nuovo" su finestra mobile di N mesi.
-    3. Premio attivazione a scala sul primo ordine qualificante nel periodo.
-    4. Gettone prestige al primo inserimento assoluto di EBB/Parosé.
-    5. Clienti persi rispetto alla finestra pre-periodo.
-    6. Saldo netto e bonus retention per agente.
-*/
-function computeResults(rows, params, period){
-  const periodStart = dateToYM(period.start);
-  const periodEnd = dateToYM(period.end);
-
-  // --- 1. Raggruppa le righe in ORDINI (Cod_Cli + Num_Doc) ---
-  const orderMap = new Map();
-  for(const r of rows){
-    const key = r.Cod_Cli+'||'+r.Num_Doc;
-    if(!orderMap.has(key)){
-      orderMap.set(key, {
-        codCli:r.Cod_Cli, codAge:r.Cod_Age, nomeAgente:r.Nome_Agente,
-        y:r.Anno, m:r.Mese, regione:r.Regione,
-        lines: new Map() // referenza -> qta pezzi totali
-      });
-    }
-    const ord = orderMap.get(key);
-    ord.lines.set(r.Descr_Merceologica, (ord.lines.get(r.Descr_Merceologica)||0) + r.Qta_Pezzi);
-  }
-  const allOrders = Array.from(orderMap.values());
-
-  // --- 2. Raggruppa ordini per cliente, ordinati cronologicamente ---
-  const ordersByClient = new Map();
-  for(const o of allOrders){
-    if(!ordersByClient.has(o.codCli)) ordersByClient.set(o.codCli, []);
-    ordersByClient.get(o.codCli).push(o);
-  }
-  for(const list of ordersByClient.values()){
-    list.sort((a,b)=>ymCompare(a,b));
-  }
-
-  // Anagrafica agenti (nome + zona = regione più frequente tra i suoi ordini)
-  const agentInfo = new Map();
-  for(const o of allOrders){
-    if(!agentInfo.has(o.codAge)) agentInfo.set(o.codAge, {nome:o.nomeAgente, regioniCount:new Map()});
-    const info = agentInfo.get(o.codAge);
-    info.nome = o.nomeAgente || info.nome;
-    if(o.regione) info.regioniCount.set(o.regione, (info.regioniCount.get(o.regione)||0)+1);
-  }
-  function agentZone(codAge){
-    const info = agentInfo.get(codAge);
-    if(!info) return '—';
-    let best=null,bestN=-1;
-    for(const [z,n] of info.regioniCount){ if(n>bestN){best=z;bestN=n;} }
-    return best||'—';
-  }
-
-  // Struttura risultati per agente
-  const agentResults = new Map();
-  function getAgent(codAge){
-    if(!agentResults.has(codAge)){
-      agentResults.set(codAge, {
-        codAge, nome: (agentInfo.get(codAge)||{}).nome || `Agente ${codAge}`,
-        zona: agentZone(codAge),
-        nuoviEvents: [], prestigeEvents: [], persiEvents: [],
-      });
-    }
-    return agentResults.get(codAge);
-  }
-
-  const PRESTIGE_REFS = ['EBB','PAROSÉ','PAROSE'];
-  function isPrestigeRef(ref){
-    const u = ref.toUpperCase();
-    return PRESTIGE_REFS.some(p=>u.includes(p));
-  }
-
-  // Fascia premio in base al numero di referenze valide
-  function fasciaImporto(numRef){
-    if(numRef>=5) return params.soglia5;
-    if(numRef===4) return params.soglia4;
-    return params.soglia3; // ==3 (il minimo qualificante di default)
-  }
-
-  // --- 3 & 4. Per ogni cliente: valuta attivazione + prestige nel periodo ---
-  for(const [codCli, orders] of ordersByClient){
-
-    // set dei tipi prestige già posseduti PRIMA di ciascun ordine (calcolato al volo)
-    const prestigeGrantedThisPeriod = new Set(); // evita doppio gettone stesso cliente/referenza nello stesso calcolo
-
-    // trova primo ordine nel periodo (per l'attivazione)
-    let firstOrderInPeriod = null;
-    for(const o of orders){
-      if(ymInRange({y:o.y,m:o.m}, periodStart, periodEnd)){ firstOrderInPeriod = o; break; }
-    }
-
-    if(firstOrderInPeriod){
-      const o = firstOrderInPeriod;
-      // referenze valide nell'ordine (>= casse minime)
-      let numRefValide = 0;
-      let totalCasse = 0;
-      for(const [ref, qty] of o.lines){
-        const casse = qty/6;
-        totalCasse += casse;
-        if(casse >= params.casseMin) numRefValide++;
-      }
-
-      // "nuovo" = nessun ordine nella finestra di N mesi prima di questo ordine
-      const windowStart = addMonths(o.y,o.m,-params.finestraMesi);
-      const hasPriorPurchase = orders.some(prev=>{
-        if(ymCompare(prev,o) >= 0) return false; // solo ordini strettamente precedenti
-        const k = ymKey(prev.y,prev.m);
-        return k >= ymKey(windowStart.y,windowStart.m) && k < ymKey(o.y,o.m);
-      });
-      const isNuovo = !hasPriorPurchase;
-
-      if(isNuovo && numRefValide>=params.refMin && totalCasse>=params.ordineMin){
-        const importo = fasciaImporto(numRefValide);
-        const ag = getAgent(o.codAge);
-        ag.nuoviEvents.push({
-          codCli, tipo:'attivazione', referenze:numRefValide,
-          importo, y:o.y, m:o.m
-        });
-      }
-    }
-
-    // --- prestige: scorri tutti gli ordini del cliente nel periodo, in ordine ---
-    for(const o of orders){
-      if(!ymInRange({y:o.y,m:o.m}, periodStart, periodEnd)) continue;
-      for(const [ref, qty] of o.lines){
-        if(!isPrestigeRef(ref)) continue;
-        const casse = qty/6;
-        if(casse < params.casseMin) continue;
-        const refKey = ref.toUpperCase().includes('EBB') ? 'EBB' : 'PAROSE';
-        const grantKey = codCli+'|'+refKey;
-        if(prestigeGrantedThisPeriod.has(grantKey)) continue;
-
-        // il cliente aveva GIA' questa referenza prestige in un ordine precedente (in assoluto)?
-        const hadBefore = orders.some(prev=>{
-          if(ymCompare(prev,o) >= 0) return false;
-          for(const [pref, pqty] of prev.lines){
-            if(!isPrestigeRef(pref)) continue;
-            const prefKey = pref.toUpperCase().includes('EBB') ? 'EBB' : 'PAROSE';
-            if(prefKey===refKey && (pqty/6) >= params.casseMin) return true;
-          }
-          return false;
-        });
-
-        if(!hadBefore){
-          prestigeGrantedThisPeriod.add(grantKey);
-          const ag = getAgent(o.codAge);
-          ag.prestigeEvents.push({
-            codCli, tipo:'prestige', referenzaPrestige: refKey,
-            importo: params.gettone, y:o.y, m:o.m
-          });
-        }
-      }
-    }
-  }
-
-  // --- 5. Clienti persi (riferiti alla finestra fissa pre-periodo) ---
-  const lookbackStart = addMonths(periodStart.y, periodStart.m, -params.finestraMesi);
-  for(const [codCli, orders] of ordersByClient){
-    // ultimo ordine del cliente prima dell'inizio periodo, dentro la finestra
-    let lastBefore = null;
-    for(const o of orders){
-      const k = ymKey(o.y,o.m);
-      if(k < ymKey(periodStart.y,periodStart.m) && k >= ymKey(lookbackStart.y,lookbackStart.m)){
-        if(!lastBefore || ymCompare(o,lastBefore) > 0) lastBefore = o;
-      }
-    }
-    if(!lastBefore) continue; // il cliente non aveva attività nella finestra: non è "perdibile" in questo periodo
-
-    const hasOrderInPeriod = orders.some(o=>ymInRange({y:o.y,m:o.m}, periodStart, periodEnd));
-    if(!hasOrderInPeriod){
-      const ag = getAgent(lastBefore.codAge);
-      ag.persiEvents.push({ codCli, ultimoOrdine:{y:lastBefore.y,m:lastBefore.m} });
-    }
-  }
-
-  // --- 6. Aggregazione finale per agente ---
-  const agentsOut = [];
-  let totRete=0, totAttivRete=0, totPrestigeRete=0, totRetentionRete=0;
-  let agentiConPremi=0, agentiRetentionPositivi=0;
-
-  for(const ag of agentResults.values()){
-    const sumAttiv = ag.nuoviEvents.reduce((s,e)=>s+e.importo,0);
-    const sumPrestige = ag.prestigeEvents.reduce((s,e)=>s+e.importo,0);
-    const nuoviCount = ag.nuoviEvents.length;
-    const persiCount = ag.persiEvents.length;
-    const saldoNetto = nuoviCount - persiCount;
-    const retentionVal = saldoNetto>0 ? saldoNetto*params.retention : 0;
-    const totale = sumAttiv+sumPrestige+retentionVal;
-
-    if(totale>0) agentiConPremi++;
-    if(retentionVal>0) agentiRetentionPositivi++;
-    totRete += totale; totAttivRete += sumAttiv; totPrestigeRete += sumPrestige; totRetentionRete += retentionVal;
-
-    agentsOut.push({
-      codAge: ag.codAge, nome: ag.nome, zona: ag.zona,
-      nuoviCount, persiCount, saldoNetto,
-      sumAttiv, sumPrestige, retentionVal, totale,
-      nuoviEvents: ag.nuoviEvents, prestigeEvents: ag.prestigeEvents, persiEvents: ag.persiEvents
-    });
-  }
-
-  agentsOut.sort((a,b)=>b.totale-a.totale);
-
-  return {
-    agents: agentsOut,
-    totals: { totRete, totAttivRete, totPrestigeRete, totRetentionRete, agentiConPremi, agentiRetentionPositivi }
-  };
-}
-
-/* ---------------------------- PERSISTENZA (localStorage) ---------------------------- */
-function saveState(){
-  const payload = {
-    rawRows: state.rawRows, meta: state.meta, params: state.params, period: state.period
-  };
-  try{
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
-    return true;
-  }catch(e){
-    // dataset troppo grande per il quota di localStorage: salviamo solo la
-    // configurazione, senza le righe grezze (non sarà possibile ricalcolare
-    // al riavvio senza un nuovo import).
-    try{
-      const light = { rawRows: [], meta: state.meta, params: state.params, period: state.period, tooLarge:true };
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(light));
-    }catch(e2){}
-    return false;
-  }
-}
-function loadState(){
-  try{
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if(!raw) return null;
-    return JSON.parse(raw);
-  }catch(e){ return null; }
-}
-function clearState(){ try{ localStorage.removeItem(STORAGE_KEY); }catch(e){} }
-
-/* ---------------------------- UI HELPERS ---------------------------- */
-function showToast(msg){
-  const t = document.getElementById('toast');
-  document.getElementById('toastText').textContent = msg;
-  t.classList.add('show');
-  clearTimeout(showToast._tm);
-  showToast._tm = setTimeout(()=>t.classList.remove('show'), 2600);
-}
-function showLoading(text){
-  document.getElementById('loadingText').textContent = text || 'Elaborazione dati…';
-  document.getElementById('loadingOverlay').classList.remove('hide');
-}
-function hideLoading(){ document.getElementById('loadingOverlay').classList.add('hide'); }
-
-function setScreen(which){
-  document.getElementById('screenImport').classList.toggle('hide', which!=='import');
-  document.getElementById('screenDashboard').classList.toggle('hide', which!=='dashboard');
-  const showTop = which==='dashboard';
-  document.getElementById('btnParams').classList.toggle('hide', !showTop);
-  document.getElementById('btnNewImport').classList.toggle('hide', !showTop);
-  document.getElementById('btnExport').classList.toggle('hide', !showTop);
-  document.getElementById('dataStatusPill').classList.toggle('hide', !showTop);
-}
-
-/* ---------------------------- IMPORT FLOW ---------------------------- */
-const dropzone = document.getElementById('dropzone');
-const fileInput = document.getElementById('fileInput');
-dropzone.addEventListener('click', ()=>fileInput.click());
-dropzone.addEventListener('dragover', e=>{ e.preventDefault(); dropzone.classList.add('drag'); });
-dropzone.addEventListener('dragleave', ()=>dropzone.classList.remove('drag'));
-dropzone.addEventListener('drop', e=>{
-  e.preventDefault(); dropzone.classList.remove('drag');
-  if(e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
-});
-fileInput.addEventListener('change', e=>{
-  if(e.target.files.length) handleFile(e.target.files[0]);
-});
-
-function handleFile(file){
-  showLoading('Lettura del file Excel…');
+function importaExcel(file){
   const reader = new FileReader();
-  reader.onload = function(evt){
-    setTimeout(()=>{ // yield al browser per mostrare lo spinner
-      try{
-        const data = new Uint8Array(evt.target.result);
-        const wb = XLSX.read(data, {type:'array'});
-        const rawJson = parseWorkbookRows(wb);
-        showLoading('Applicazione filtri e calcolo premi…');
-        setTimeout(()=>{
-          const {kept, excluded, totalRaw} = applyFilters(rawJson);
-          const meta = buildMeta(kept, excluded, totalRaw);
-          state.rawRows = kept;
-          state.meta = meta;
-          state.period = defaultPeriod(kept);
-          state.params = {...DEFAULT_PARAMS};
-          runCompute();
-          saveState();
-          renderImportSummary();
-          hideLoading();
-        }, 30);
-      }catch(err){
-        hideLoading();
-        alert('Errore nella lettura del file: '+err.message);
-      }
-    }, 30);
+  reader.onload = function(e){
+    try{
+      const wb = XLSX.read(e.target.result, {type:'array'});
+      const sheet = wb.Sheets[wb.SheetNames[0]];
+      const json = XLSX.utils.sheet_to_json(sheet, {defval:''});
+      processaImport(json);
+    }catch(err){
+      alert('Errore nella lettura del file: ' + err.message);
+    }
   };
   reader.readAsArrayBuffer(file);
 }
 
-function renderImportSummary(){
-  const m = state.meta;
-  document.getElementById('sumRows').textContent = m.rowsKept.toLocaleString('it-IT');
-  document.getElementById('sumAgents').textContent = m.agentCount;
-  document.getElementById('sumClients').textContent = m.clientCount;
-  document.getElementById('sumRange').textContent = m.minYM ? `${fmtYM(m.minYM)} – ${fmtYM(m.maxYM)}` : '—';
+function processaImport(json){
+  let scartate = 0;
+  const motivi = {};
+  const scarta = (motivo)=>{ scartate++; motivi[motivo]=(motivi[motivo]||0)+1; };
 
-  const ex = m.excluded;
-  const totEx = ex.stato+ex.codAge+ex.nomeAgente+ex.referenza;
-  const list = document.getElementById('exclList');
-  if(totEx===0){
-    list.innerHTML = '<div class="excl-row"><span>Nessuna riga esclusa dai filtri.</span></div>';
-  }else{
-    list.innerHTML = `
-      <div class="excl-row"><span>Stato diverso da _ITALIA</span><b>${ex.stato}</b></div>
-      <div class="excl-row"><span>Codice agente escluso (999/99/95)</span><b>${ex.codAge}</b></div>
-      <div class="excl-row"><span>Agente PROVA / WINE CLUB</span><b>${ex.nomeAgente}</b></div>
-      <div class="excl-row"><span>Referenza vuota o FONTECOLO</span><b>${ex.referenza}</b></div>
-    `;
+  const AGENTI_ESCLUSI = new Set(['999','99','95']);
+  const rows = [];
+
+  json.forEach(r=>{
+    const codAge = normalizza(r.Cod_Age);
+    const nomeAgente = normalizza(r.Nome_Agente);
+    const stato = normalizza(r.Stato).toUpperCase();
+    const descr = normalizza(r.Descr_Merceologica);
+    const nomeUp = nomeAgente.toUpperCase();
+
+    // --- Filtri fissi (identici alla logica validata nel foglio Excel) ---
+    if (AGENTI_ESCLUSI.has(codAge)) { scarta('agente escluso (999/99/95)'); return; }
+    if (nomeUp.includes('PROVA') || nomeUp.includes('WINE CLUB')) { scarta('agente PROVA/WINE CLUB'); return; }
+    if (descr.toUpperCase() === 'FONTECOLO') { scarta('riga FONTECOLO (olio)'); return; }
+    if (!descr) { scarta('riga senza referenza'); return; }
+    if (stato !== '_ITALIA') { scarta('Stato diverso da _ITALIA'); return; }
+
+    const anno = parseInt(r.Anno, 10);
+    const mese = parseInt(r.Mese, 10);
+    if (!anno || !mese) { scarta('Anno/Mese mancante o non valido'); return; }
+
+    rows.push({
+      codCli: normalizza(r.Cod_Cli),
+      codAge: codAge || nomeAgente,
+      nomeAgente: nomeAgente || ('Agente ' + codAge),
+      anno, mese,
+      numDoc: normalizza(r.Num_Doc),
+      descrMerc: descr,
+      qtaPezzi: parseFloat(r.Qta_Pezzi) || 0,
+      importoNetto: parseFloat(r.Importo_Netto) || 0,
+      regione: normalizza(r.Regione),
+      stato
+    });
+  });
+
+  const orders = buildOrders(rows);
+
+  const agenti = new Set(rows.map(r=>r.codAge));
+  const clienti = new Set(rows.map(r=>r.codCli));
+  let dataMin = null, dataMax = null;
+  rows.forEach(r=>{
+    const idx = r.anno*12+r.mese;
+    if(dataMin===null || idx<dataMin) dataMin = idx;
+    if(dataMax===null || idx>dataMax) dataMax = idx;
+  });
+
+  STATE.rows = rows;
+  STATE.orders = orders;
+  STATE.importReport = {
+    totRighe: json.length,
+    righeValide: rows.length,
+    scartate, motivi,
+    agenti: agenti.size,
+    clienti: clienti.size,
+    dataMin, dataMax
+  };
+
+  if(!STATE.parametri.periodoInizio){
+    const p = defaultPeriodo();
+    STATE.parametri.periodoInizio = p.inizio;
+    STATE.parametri.periodoFine = p.fine;
   }
-  document.getElementById('importSummaryBox').classList.remove('hide');
+
+  ricalcola();
+  salvaLocale();
+  renderImportReport();
 }
 
-document.getElementById('btnGoDashboard').addEventListener('click', ()=>{
-  setScreen('dashboard');
+// Aggrega le righe per ordine (Cod_Cli + Num_Doc): un ordine puo' contenere piu' referenze
+function buildOrders(rows){
+  const map = new Map();
+  rows.forEach(r=>{
+    const key = r.codCli + '||' + r.numDoc;
+    if(!map.has(key)){
+      map.set(key, {
+        codCli: r.codCli, numDoc: r.numDoc,
+        codAge: r.codAge, nomeAgente: r.nomeAgente,
+        anno: r.anno, mese: r.mese, monthIndex: r.anno*12+r.mese,
+        referenze: new Map(), // descrizione -> qta pezzi totale
+        importoNetto: 0
+      });
+    }
+    const o = map.get(key);
+    o.referenze.set(r.descrMerc, (o.referenze.get(r.descrMerc)||0) + r.qtaPezzi);
+    o.importoNetto += r.importoNetto;
+  });
+  return Array.from(map.values());
+}
+
+/* ---------------- 4. MOTORE DI CALCOLO PREMI ---------------- */
+/*
+  Per ogni cliente si ricostruisce l'intero storico ordini (non solo il
+  periodo selezionato), perche' per stabilire se un cliente e' "nuovo" o
+  "perso" serve la finestra mobile di 12 mesi che puo' guardare fuori dal
+  periodo. I premi vengono pero' SEMPRE attribuiti solo se l'evento generatore
+  (primo ordine qualificante, prima referenza prestige, perdita del cliente)
+  cade dentro il periodo selezionato.
+*/
+function meseAIndice(str){ // 'YYYY-MM' -> intero comparabile
+  const [y,m] = str.split('-').map(Number);
+  return y*12+m;
+}
+
+function motoreCalcolo(orders, parametri){
+  const startIdx = meseAIndice(parametri.periodoInizio);
+  const endIdx = meseAIndice(parametri.periodoFine);
+  const {
+    finestraMesi, casseMinimePerReferenza, referenzeMinime, ordineMinimoCasse,
+    premio3, premio4, premio5, gettonePrestige, retentionValore
+  } = parametri;
+
+  // Raggruppa ordini per cliente, ordinati cronologicamente
+  const clientMap = new Map();
+  orders.forEach(o=>{
+    if(!clientMap.has(o.codCli)) clientMap.set(o.codCli, []);
+    clientMap.get(o.codCli).push(o);
+  });
+  clientMap.forEach(list=>list.sort((a,b)=>a.monthIndex-b.monthIndex));
+
+  const agentiMap = new Map(); // codAge -> risultati
+  function agente(codAge, nome){
+    if(!agentiMap.has(codAge)){
+      agentiMap.set(codAge, { codAge, nome, attivazioni:[], gettoni:[], persi:[] });
+    }
+    const a = agentiMap.get(codAge);
+    if(nome) a.nome = nome;
+    return a;
+  }
+
+  clientMap.forEach((storicoOrdini, codCli)=>{
+    const ordiniPeriodo = storicoOrdini.filter(o=>o.monthIndex>=startIdx && o.monthIndex<=endIdx);
+
+    // ---- 4.1 PREMIO ATTIVAZIONE (regola: nuovo cliente + N referenze + ordine minimo) ----
+    if(ordiniPeriodo.length>0){
+      const primoOrdine = ordiniPeriodo[0];
+      const haStoricoRecente = storicoOrdini.some(o =>
+        o.monthIndex < primoOrdine.monthIndex &&
+        o.monthIndex >= primoOrdine.monthIndex - finestraMesi
+      );
+      const isNuovo = !haStoricoRecente;
+
+      const refEntries = Array.from(primoOrdine.referenze.entries()).map(([descr, qta])=>({
+        descr, casse: qta/6
+      }));
+      const referenzeValide = refEntries.filter(r => r.casse >= casseMinimePerReferenza);
+      const totaleCasseOrdine = refEntries.reduce((s,r)=>s+r.casse, 0);
+
+      if(isNuovo && referenzeValide.length >= referenzeMinime && totaleCasseOrdine >= ordineMinimoCasse){
+        const fascia = referenzeValide.length >= 5 ? 5 : referenzeValide.length; // 3, 4 o 5+
+        const premio = fascia === 3 ? premio3 : fascia === 4 ? premio4 : premio5;
+        const ag = agente(primoOrdine.codAge, primoOrdine.nomeAgente);
+        ag.attivazioni.push({
+          codCli, monthIndex: primoOrdine.monthIndex, fascia, premio,
+          referenze: referenzeValide.map(r=>r.descr)
+        });
+      }
+    }
+
+    // ---- 4.2 GETTONE PRESTIGE (prima volta EBB o Parose in assoluto, su tutto lo storico) ----
+    let ebbGiaAvuto = false, paroseGiaAvuto = false;
+    storicoOrdini.forEach(o=>{
+      let presenteEBB = false, presenteParose = false;
+      o.referenze.forEach((qta, descr)=>{
+        const d = descr.toUpperCase();
+        if(qta > 0 && d.includes('EBB')) presenteEBB = true;
+        if(qta > 0 && d.includes('PAROS')) presenteParose = true; // copre Parose/Parosé
+      });
+      const inPeriodo = o.monthIndex >= startIdx && o.monthIndex <= endIdx;
+
+      if(presenteEBB && !ebbGiaAvuto){
+        if(inPeriodo){
+          const ag = agente(o.codAge, o.nomeAgente);
+          ag.gettoni.push({ codCli, monthIndex:o.monthIndex, referenza:'EBB', importo:gettonePrestige });
+        }
+        ebbGiaAvuto = true;
+      }
+      if(presenteParose && !paroseGiaAvuto){
+        if(inPeriodo){
+          const ag = agente(o.codAge, o.nomeAgente);
+          ag.gettoni.push({ codCli, monthIndex:o.monthIndex, referenza:'Parosé', importo:gettonePrestige });
+        }
+        paroseGiaAvuto = true;
+      }
+    });
+
+    // ---- 4.3 CLIENTI PERSI (aveva comprato nei 12 mesi prima del periodo, non nel periodo) ----
+    const attivoPrimaDelPeriodo = storicoOrdini.some(o =>
+      o.monthIndex >= startIdx - finestraMesi && o.monthIndex < startIdx
+    );
+    if(attivoPrimaDelPeriodo && ordiniPeriodo.length === 0){
+      const ordiniPrima = storicoOrdini.filter(o=>o.monthIndex < startIdx);
+      const ultimo = ordiniPrima[ordiniPrima.length-1];
+      if(ultimo){
+        const ag = agente(ultimo.codAge, ultimo.nomeAgente);
+        ag.persi.push({ codCli, ultimoAcquisto: ultimo.monthIndex });
+      }
+    }
+  });
+
+  // ---- 4.4 TOTALI PER AGENTE ----
+  const risultati = Array.from(agentiMap.values()).map(ag=>{
+    const totPremiAttivazione = ag.attivazioni.reduce((s,a)=>s+a.premio, 0);
+    const totGettoni = ag.gettoni.reduce((s,g)=>s+g.importo, 0);
+    const saldoNetto = ag.attivazioni.length - ag.persi.length;
+    const retention = saldoNetto > 0 ? saldoNetto * retentionValore : 0;
+    return {
+      ...ag,
+      nuoviQualificati: ag.attivazioni.length,
+      persiCount: ag.persi.length,
+      saldoNetto,
+      totPremiAttivazione, totGettoni, retention,
+      totale: totPremiAttivazione + totGettoni + retention
+    };
+  });
+
+  return risultati;
+}
+
+function ricalcola(){
+  if(STATE.orders.length===0) return;
+  STATE.risultati = motoreCalcolo(STATE.orders, STATE.parametri);
+}
+
+/* ---------------- 5. RENDER: TOPBAR ---------------- */
+function renderTopbar(){
+  const el = document.getElementById('topbarActions');
+  if(STATE.rows.length===0){ el.innerHTML=''; return; }
+  el.innerHTML = `
+    <button class="btn btn-ghost btn-sm" onclick="apriParametri()">⚙️ Parametri</button>
+    <button class="btn btn-ghost btn-sm" onclick="esportaExcel()">⬇️ Esporta</button>
+    <button class="btn btn-danger-ghost btn-sm" onclick="nuovoImport()">↺ Nuovo import</button>
+  `;
+}
+
+/* ---------------- 6. RENDER: SCHERMATA IMPORT ---------------- */
+function renderImportScreen(){
+  const el = document.getElementById('screenImport');
+  el.innerHTML = `
+    <div class="import-wrap">
+      <div class="dropzone" id="dropzone">
+        <div class="dropzone-icon">📊</div>
+        <h2>Carica i dati di vendita</h2>
+        <p>Trascina qui il file Excel con gli ordini per agente, oppure selezionalo dal computer.<br>
+        Il file resta nel browser: nessun dato viene inviato altrove.</p>
+        <input type="file" id="fileInput" accept=".xlsx,.xls" class="hidden">
+        <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()">Seleziona file Excel</button>
+      </div>
+      <div id="importReportWrap"></div>
+    </div>
+  `;
+  const dz = document.getElementById('dropzone');
+  const fi = document.getElementById('fileInput');
+  fi.addEventListener('change', e=>{ if(e.target.files[0]) importaExcel(e.target.files[0]); });
+  ['dragenter','dragover'].forEach(ev=>dz.addEventListener(ev, e=>{ e.preventDefault(); dz.classList.add('drag'); }));
+  ['dragleave','drop'].forEach(ev=>dz.addEventListener(ev, e=>{ e.preventDefault(); dz.classList.remove('drag'); }));
+  dz.addEventListener('drop', e=>{ const f=e.dataTransfer.files[0]; if(f) importaExcel(f); });
+
+  renderImportReport();
+}
+
+function meseLabel(idx){
+  if(idx===null||idx===undefined) return '—';
+  const anno = Math.floor((idx-1)/12);
+  const mese = idx - anno*12;
+  const nomi = ['','Gen','Feb','Mar','Apr','Mag','Giu','Lug','Ago','Set','Ott','Nov','Dic'];
+  return nomi[mese] + ' ' + anno;
+}
+
+function renderImportReport(){
+  const wrap = document.getElementById('importReportWrap');
+  if(!wrap) return;
+  const r = STATE.importReport;
+  if(!r){ wrap.innerHTML=''; return; }
+
+  const motiviHtml = Object.entries(r.motivi).map(([m,c])=>`<div>• <b>${c}</b> righe — ${m}</div>`).join('');
+
+  wrap.innerHTML = `
+    <div class="import-report">
+      <h3>Import completato</h3>
+      <div class="import-stats">
+        <div class="import-stat"><b>${r.righeValide.toLocaleString('it-IT')}</b><span>righe valide</span></div>
+        <div class="import-stat"><b>${r.agenti}</b><span>agenti</span></div>
+        <div class="import-stat"><b>${r.clienti.toLocaleString('it-IT')}</b><span>clienti</span></div>
+        <div class="import-stat"><b>${meseLabel(r.dataMin)} → ${meseLabel(r.dataMax)}</b><span>periodo dati</span></div>
+      </div>
+      ${r.scartate>0 ? `<div class="import-warn"><b>${r.scartate}</b> righe scartate dai filtri:<br>${motiviHtml}</div>` : ''}
+      <div style="margin-top:16px;text-align:right;">
+        <button class="btn btn-primary" onclick="vaiAllaDashboard()">Continua alla dashboard →</button>
+      </div>
+    </div>
+  `;
+}
+
+function vaiAllaDashboard(){
+  document.getElementById('screenImport').classList.add('hidden');
+  document.getElementById('screenDashboard').classList.remove('hidden');
+  renderTopbar();
   renderDashboard();
-});
-document.getElementById('btnNewImport').addEventListener('click', ()=>{
-  if(!confirm('Ripartire da un nuovo import? I dati caricati ora verranno sostituiti.')) return;
-  clearState();
-  state = { rawRows:[], meta:null, params:{...DEFAULT_PARAMS}, period:null, results:null, sortKey:'totale', sortDir:'desc', filterText:'' };
-  document.getElementById('importSummaryBox').classList.add('hide');
-  fileInput.value='';
-  setScreen('import');
-});
-
-/* ---------------------------- COMPUTE + RENDER ---------------------------- */
-function runCompute(){
-  state.results = computeResults(state.rawRows, state.params, state.period);
 }
 
-function updateDataStatusPill(){
-  const el = document.getElementById('dataStatusText');
-  el.textContent = `${state.meta.rowsKept.toLocaleString('it-IT')} righe · ${state.meta.agentCount} agenti`;
+function nuovoImport(){
+  if(!confirm('Vuoi importare un nuovo file? Il calcolo attuale verrà sostituito (i parametri restano invariati).')) return;
+  STATE.rows = []; STATE.orders = []; STATE.importReport = null; STATE.risultati = [];
+  document.getElementById('screenDashboard').classList.add('hidden');
+  document.getElementById('screenImport').classList.remove('hidden');
+  renderTopbar();
+  renderImportScreen();
+  salvaLocale();
+}
+
+/* ---------------- 7. RENDER: DASHBOARD ---------------- */
+function fmt(n){ return '€ ' + Math.round(n).toLocaleString('it-IT'); }
+
+// Selettori mese/anno "a prova di browser": Safari non supporta <input type="month">,
+// quindi il periodo campagna si sceglie con due <select> invece dell'input nativo.
+const NOMI_MESE = ['Gen','Feb','Mar','Apr','Mag','Giu','Lug','Ago','Set','Ott','Nov','Dic'];
+
+function selectMese(id, valorePeriodo){
+  const meseSel = valorePeriodo ? parseInt(valorePeriodo.split('-')[1], 10) : (new Date().getMonth()+1);
+  const opzioni = NOMI_MESE.map((nome,i)=>{
+    const m = i+1;
+    const mm = String(m).padStart(2,'0');
+    return `<option value="${mm}" ${m===meseSel?'selected':''}>${nome}</option>`;
+  }).join('');
+  return `<select id="${id}">${opzioni}</select>`;
+}
+
+function selectAnno(id, valorePeriodo){
+  const annoSel = valorePeriodo ? parseInt(valorePeriodo.split('-')[0], 10) : new Date().getFullYear();
+  // range di anni: da quelli presenti nei dati importati (con margine), cosi' copre sempre il file caricato
+  let annoMin = annoSel-1, annoMax = annoSel+1;
+  if(STATE.importReport && STATE.importReport.dataMin && STATE.importReport.dataMax){
+    annoMin = Math.min(annoMin, Math.floor((STATE.importReport.dataMin-1)/12));
+    annoMax = Math.max(annoMax, Math.floor((STATE.importReport.dataMax-1)/12));
+  }
+  let opzioni = '';
+  for(let y=annoMin; y<=annoMax; y++){
+    opzioni += `<option value="${y}" ${y===annoSel?'selected':''}>${y}</option>`;
+  }
+  return `<select id="${id}">${opzioni}</select>`;
 }
 
 function renderDashboard(){
-  runCompute();
-  updateDataStatusPill();
+  const el = document.getElementById('screenDashboard');
+  const p = STATE.parametri;
+  const risultati = STATE.risultati;
 
-  const startYM = dateToYM(state.period.start), endYM = dateToYM(state.period.end);
-  document.getElementById('periodLabel').textContent =
-    `Periodo campagna: ${fmtYM(startYM)} → ${fmtYM(endYM)}`;
+  const totAttivazione = risultati.reduce((s,a)=>s+a.totPremiAttivazione,0);
+  const totGettoni = risultati.reduce((s,a)=>s+a.totGettoni,0);
+  const totRetention = risultati.reduce((s,a)=>s+a.retention,0);
+  const totale = totAttivazione+totGettoni+totRetention;
 
-  const t = state.results.totals;
-  document.getElementById('cardTotale').textContent = fmtEUR(t.totRete);
-  document.getElementById('cardTotaleSub').textContent = `${t.agentiConPremi} agenti con premi maturati`;
-  document.getElementById('cardAttiv').textContent = fmtEUR(t.totAttivRete);
-  const nuoviTot = state.results.agents.reduce((s,a)=>s+a.nuoviCount,0);
-  document.getElementById('cardAttivSub').textContent = `${nuoviTot} nuovi clienti qualificati`;
-  document.getElementById('cardPrestige').textContent = fmtEUR(t.totPrestigeRete);
-  const prestigeTot = state.results.agents.reduce((s,a)=>s+a.prestigeEvents.length,0);
-  document.getElementById('cardPrestigeSub').textContent = `${prestigeTot} primi inserimenti EBB/Parosé`;
-  document.getElementById('cardRetention').textContent = fmtEUR(t.totRetentionRete);
-  document.getElementById('cardRetentionSub').textContent = `${t.agentiRetentionPositivi} agenti con saldo netto positivo`;
+  el.innerHTML = `
+    <div class="controls-row">
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <div class="periodo-pill">
+          📅 Periodo
+          ${selectMese('periodoInizioMese', p.periodoInizio)} ${selectAnno('periodoInizioAnno', p.periodoInizio)}
+          <span class="periodo-arrow">→</span>
+          ${selectMese('periodoFineMese', p.periodoFine)} ${selectAnno('periodoFineAnno', p.periodoFine)}
+        </div>
+      </div>
+      <div class="search-box">
+        🔎 <input type="text" id="searchInput" placeholder="Cerca agente o zona..." value="${STATE.search}">
+      </div>
+    </div>
+
+    <div class="summary-cards">
+      <div class="card card-total">
+        <div class="card-label">Totale da liquidare</div>
+        <div class="card-value">${fmt(totale)}</div>
+        <div class="card-sub">${risultati.length} agenti con premi maturati</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Premi attivazione</div>
+        <div class="card-value" style="color:var(--verde-testo)">${fmt(totAttivazione)}</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Gettoni prestige</div>
+        <div class="card-value" style="color:var(--oro)">${fmt(totGettoni)}</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Retention</div>
+        <div class="card-value" style="color:var(--verde-testo)">${fmt(totRetention)}</div>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr id="tableHead"></tr></thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+    <div class="footer-note">Canvass Nuove Attivazioni — Mosnel · calcolo interamente lato browser, nessun dato lascia questo computer.</div>
+  `;
+
+  const aggiornaPeriodo = ()=>{
+    const mi = document.getElementById('periodoInizioMese').value;
+    const ai = document.getElementById('periodoInizioAnno').value;
+    const mf = document.getElementById('periodoFineMese').value;
+    const af = document.getElementById('periodoFineAnno').value;
+    STATE.parametri.periodoInizio = ai + '-' + mi;
+    STATE.parametri.periodoFine = af + '-' + mf;
+    ricalcola(); salvaLocale(); renderDashboard();
+  };
+  ['periodoInizioMese','periodoInizioAnno','periodoFineMese','periodoFineAnno'].forEach(id=>{
+    document.getElementById(id).addEventListener('change', aggiornaPeriodo);
+  });
+  document.getElementById('searchInput').addEventListener('input', e=>{
+    STATE.search = e.target.value; renderTable();
+  });
 
   renderTable();
 }
 
-function getFilteredSortedAgents(){
-  let list = state.results.agents;
-  const q = state.filterText.trim().toLowerCase();
-  if(q){
-    list = list.filter(a => a.nome.toLowerCase().includes(q) || a.zona.toLowerCase().includes(q));
-  }
-  const key = state.sortKey, dir = state.sortDir==='asc'?1:-1;
-  const keyFn = {
-    nome:a=>a.nome, zona:a=>a.zona, nuovi:a=>a.nuoviCount, persi:a=>a.persiCount,
-    saldo:a=>a.saldoNetto, attiv:a=>a.sumAttiv, prestige:a=>a.sumPrestige,
-    retention:a=>a.retentionVal, totale:a=>a.totale
-  }[key];
-  list = [...list].sort((a,b)=>{
-    const va=keyFn(a), vb=keyFn(b);
-    if(typeof va==='string') return va.localeCompare(vb)*dir;
-    return (va-vb)*dir;
-  });
-  return list;
-}
+const COLONNE = [
+  {key:'nome', label:'Agente'},
+  {key:'nuoviQualificati', label:'Nuovi', num:true},
+  {key:'persiCount', label:'Persi', num:true},
+  {key:'saldoNetto', label:'Saldo netto', num:true},
+  {key:'totPremiAttivazione', label:'Premi attiv.', num:true},
+  {key:'totGettoni', label:'Gettoni', num:true},
+  {key:'retention', label:'Retention', num:true},
+  {key:'totale', label:'Totale', num:true}
+];
 
 function renderTable(){
-  const list = getFilteredSortedAgents();
-  document.getElementById('tableCount').textContent = `${list.length} agenti`;
-  const tbody = document.getElementById('agentsTbody');
-  if(list.length===0){
-    tbody.innerHTML = '<tr class="empty-row"><td colspan="9">Nessun agente trovato.</td></tr>';
+  const head = document.getElementById('tableHead');
+  const body = document.getElementById('tableBody');
+  if(!head || !body) return;
+
+  head.innerHTML = COLONNE.map(c=>{
+    const arrow = STATE.sortCol===c.key ? (STATE.sortDir==='desc'?' ↓':' ↑') : '';
+    return `<th onclick="ordinaPer('${c.key}')">${c.label}${arrow}</th>`;
+  }).join('');
+
+  let rows = STATE.risultati.slice();
+  if(STATE.search.trim()){
+    const q = STATE.search.toLowerCase();
+    rows = rows.filter(r => (r.nome||'').toLowerCase().includes(q));
+  }
+  rows.sort((a,b)=>{
+    const dir = STATE.sortDir==='desc' ? -1 : 1;
+    const av = a[STATE.sortCol], bv = b[STATE.sortCol];
+    if(typeof av === 'string') return av.localeCompare(bv)*dir;
+    return (av-bv)*dir;
+  });
+
+  if(rows.length===0){
+    body.innerHTML = `<tr><td colspan="${COLONNE.length}" style="padding:30px;text-align:center;color:var(--testo-mut);">Nessun agente trovato con i filtri attuali.</td></tr>`;
     return;
   }
-  tbody.innerHTML = list.map(a=>{
-    const saldoClass = a.saldoNetto>0?'saldo-pos':(a.saldoNetto<0?'saldo-neg':'saldo-zero');
-    const saldoSign = a.saldoNetto>0?'+':'';
+
+  body.innerHTML = rows.map(r=>{
+    const saldoClass = r.saldoNetto>0?'saldo-pos':(r.saldoNetto<0?'saldo-neg':'saldo-zero');
+    const dotClass = r.saldoNetto>0?'dot-pos':(r.saldoNetto<0?'dot-neg':'dot-zero');
     return `
-      <tr data-cod="${a.codAge}">
-        <td><div class="agent-name">${escapeHtml(a.nome)}</div></td>
-        <td><span class="agent-zone">${escapeHtml(a.zona)}</span></td>
-        <td class="num-cell">${a.nuoviCount}</td>
-        <td class="num-cell">${a.persiCount}</td>
-        <td><span class="saldo-badge ${saldoClass}"><span class="badge-dot"></span>${saldoSign}${a.saldoNetto}</span></td>
-        <td class="num-cell">${fmtEUR(a.sumAttiv)}</td>
-        <td class="num-cell">${fmtEUR(a.sumPrestige)}</td>
-        <td class="num-cell">${fmtEUR(a.retentionVal)}</td>
-        <td class="tot-cell">${fmtEUR(a.totale)}</td>
+      <tr onclick="apriDettaglioAgente('${r.codAge.replace(/'/g,"\\'")}')">
+        <td>${r.nome}</td>
+        <td class="num">${r.nuoviQualificati}</td>
+        <td class="num">${r.persiCount}</td>
+        <td class="num"><span class="saldo-badge ${saldoClass}"><span class="dot ${dotClass}"></span>${r.saldoNetto>0?'+':''}${r.saldoNetto}</span></td>
+        <td class="num">${fmt(r.totPremiAttivazione)}</td>
+        <td class="num">${fmt(r.totGettoni)}</td>
+        <td class="num">${fmt(r.retention)}</td>
+        <td class="num tot-cell">${fmt(r.totale)}</td>
       </tr>
     `;
   }).join('');
-
-  tbody.querySelectorAll('tr[data-cod]').forEach(tr=>{
-    tr.addEventListener('click', ()=>openDetail(parseInt(tr.dataset.cod,10)));
-  });
 }
 
-function escapeHtml(s){
-  return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
-
-// sorting header clicks
-document.querySelectorAll('thead th[data-key]').forEach(th=>{
-  th.addEventListener('click', ()=>{
-    const key = th.dataset.key;
-    if(state.sortKey===key){ state.sortDir = state.sortDir==='asc'?'desc':'asc'; }
-    else { state.sortKey = key; state.sortDir = (key==='nome'||key==='zona')?'asc':'desc'; }
-    document.querySelectorAll('thead th .arrow').forEach(a=>a.textContent='');
-    th.querySelector('.arrow').textContent = state.sortDir==='asc'?'▲':'▼';
-    renderTable();
-  });
-});
-
-document.getElementById('searchInput').addEventListener('input', e=>{
-  state.filterText = e.target.value;
+function ordinaPer(key){
+  if(STATE.sortCol===key){ STATE.sortDir = STATE.sortDir==='desc'?'asc':'desc'; }
+  else { STATE.sortCol = key; STATE.sortDir = 'desc'; }
   renderTable();
-});
+}
 
-/* ---------------------------- DETTAGLIO AGENTE ---------------------------- */
-function openDetail(codAge){
-  const a = state.results.agents.find(x=>x.codAge===codAge);
-  if(!a) return;
+/* ---------------- 8. MODALE DETTAGLIO AGENTE ---------------- */
+function apriDettaglioAgente(codAge){
+  const ag = STATE.risultati.find(r=>r.codAge===codAge);
+  if(!ag) return;
 
-  const events = [
-    ...a.nuoviEvents.map(e=>({...e, kind:'attivazione'})),
-    ...a.prestigeEvents.map(e=>({...e, kind:'prestige'}))
-  ].sort((x,y)=>ymKey(y.y,y.m)-ymKey(x.y,x.m));
-
-  let html = `
-    <div class="detail-agent-name">${escapeHtml(a.nome)}</div>
-    <div class="detail-agent-sub">${escapeHtml(a.zona)} · codice agente ${a.codAge}</div>
-    <div class="detail-totals">
-      <div class="dt-cell"><div class="num">${a.nuoviCount}</div><div class="lbl">nuovi qualificati</div></div>
-      <div class="dt-cell"><div class="num">${a.persiCount}</div><div class="lbl">clienti persi</div></div>
-      <div class="dt-cell"><div class="num">${a.saldoNetto>0?'+':''}${a.saldoNetto}</div><div class="lbl">saldo netto</div></div>
+  const eventiAttivazione = ag.attivazioni.slice().sort((a,b)=>b.monthIndex-a.monthIndex).map(a=>`
+    <div class="event-row">
+      <div class="ev-left">
+        <span class="ev-cli">Cliente ${a.codCli}</span>
+        <span class="ev-meta">${meseLabel(a.monthIndex)} · ${a.fascia}+ referenze (${a.referenze.join(', ')})</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span class="event-tag tag-attivazione">Attivazione</span>
+        <span class="ev-value">${fmt(a.premio)}</span>
+      </div>
     </div>
-    <div class="section-label">Eventi che generano premio</div>
-  `;
+  `).join('') || '<div class="empty-note">Nessuna nuova attivazione nel periodo.</div>';
 
-  if(events.length===0){
-    html += `<div class="event-row"><span class="ev-meta">Nessun evento nel periodo selezionato.</span></div>`;
-  }else{
-    html += events.map(e=>{
-      const tag = e.kind==='attivazione'
-        ? `<span class="tag tag-attiv">Attivazione ${e.referenze} ref.</span>`
-        : `<span class="tag tag-prestige">Gettone ${e.referenzaPrestige}</span>`;
-      return `
-        <div class="event-row">
-          <div class="ev-left">
-            <div class="ev-client">Cliente ${escapeHtml(e.codCli)}</div>
-            <div class="ev-meta">${tag} · ${fmtYM({y:e.y,m:e.m})}</div>
+  const eventiGettone = ag.gettoni.slice().sort((a,b)=>b.monthIndex-a.monthIndex).map(g=>`
+    <div class="event-row">
+      <div class="ev-left">
+        <span class="ev-cli">Cliente ${g.codCli}</span>
+        <span class="ev-meta">${meseLabel(g.monthIndex)} · prima volta ${g.referenza}</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span class="event-tag tag-gettone">Gettone</span>
+        <span class="ev-value">${fmt(g.importo)}</span>
+      </div>
+    </div>
+  `).join('') || '<div class="empty-note">Nessun gettone prestige nel periodo.</div>';
+
+  const eventiPersi = ag.persi.slice().sort((a,b)=>b.ultimoAcquisto-a.ultimoAcquisto).map(p=>`
+    <div class="event-row">
+      <div class="ev-left">
+        <span class="ev-cli">Cliente ${p.codCli}</span>
+        <span class="ev-meta">ultimo acquisto ${meseLabel(p.ultimoAcquisto)}</span>
+      </div>
+      <span class="event-tag tag-perso">Perso</span>
+    </div>
+  `).join('') || '<div class="empty-note">Nessun cliente perso nel periodo.</div>';
+
+  document.getElementById('modalRoot').innerHTML = `
+    <div class="overlay" onclick="if(event.target===this) chiudiModale()">
+      <div class="modal">
+        <div class="modal-header">
+          <div>
+            <h2>${ag.nome}</h2>
+            <p>Dettaglio verificabile dei premi maturati nel periodo ${p_meseLungo(STATE.parametri.periodoInizio)} → ${p_meseLungo(STATE.parametri.periodoFine)}</p>
           </div>
-          <div class="ev-amount">${fmtEUR(e.importo)}</div>
+          <button class="modal-close" onclick="chiudiModale()">✕</button>
         </div>
-      `;
-    }).join('');
-  }
-
-  html += `<div class="section-label">Clienti persi</div>`;
-  if(a.persiEvents.length===0){
-    html += `<div class="event-row"><span class="ev-meta">Nessun cliente perso nel periodo.</span></div>`;
-  }else{
-    html += a.persiEvents.map(p=>`
-      <div class="event-row">
-        <div class="ev-left">
-          <div class="ev-client">Cliente ${escapeHtml(p.codCli)}</div>
-          <div class="ev-meta"><span class="tag tag-perso">Perso</span> · ultimo ordine ${fmtYM(p.ultimoOrdine)}</div>
+        <div class="modal-body">
+          <div class="modal-section">
+            <h4>Nuove attivazioni (${ag.attivazioni.length})</h4>
+            ${eventiAttivazione}
+          </div>
+          <div class="modal-section">
+            <h4>Gettoni prestige EBB / Parosé (${ag.gettoni.length})</h4>
+            ${eventiGettone}
+          </div>
+          <div class="modal-section">
+            <h4>Clienti persi (${ag.persi.length}) — saldo netto ${ag.saldoNetto>0?'+':''}${ag.saldoNetto}</h4>
+            ${eventiPersi}
+          </div>
+          <div class="modal-total">
+            <span>Totale da liquidare</span>
+            <b>${fmt(ag.totale)}</b>
+          </div>
         </div>
       </div>
-    `).join('');
-  }
-
-  html += `
-    <div class="grand-total">
-      <div>
-        <div class="lbl">Totale da liquidare</div>
-        <div style="font-size:10.5px;opacity:.85;margin-top:2px;">attiv. ${fmtEUR(a.sumAttiv)} + gettoni ${fmtEUR(a.sumPrestige)} + retention ${fmtEUR(a.retentionVal)}</div>
-      </div>
-      <div class="val">${fmtEUR(a.totale)}</div>
     </div>
   `;
-
-  document.getElementById('detailBody').innerHTML = html;
-  document.getElementById('detailOverlay').classList.remove('hide');
 }
-document.getElementById('closeDetail').addEventListener('click', ()=>document.getElementById('detailOverlay').classList.add('hide'));
-document.getElementById('detailOverlay').addEventListener('click', e=>{
-  if(e.target.id==='detailOverlay') e.currentTarget.classList.add('hide');
-});
-
-/* ---------------------------- PARAMETRI ---------------------------- */
-function openParams(){
-  document.getElementById('p_soglia3').value = state.params.soglia3;
-  document.getElementById('p_soglia4').value = state.params.soglia4;
-  document.getElementById('p_soglia5').value = state.params.soglia5;
-  document.getElementById('p_gettone').value = state.params.gettone;
-  document.getElementById('p_retention').value = state.params.retention;
-  document.getElementById('p_refMin').value = state.params.refMin;
-  document.getElementById('p_casseMin').value = state.params.casseMin;
-  document.getElementById('p_finestra').value = state.params.finestraMesi;
-  document.getElementById('p_ordineMin').value = state.params.ordineMin;
-  document.getElementById('p_dataInizio').value = state.period.start;
-  document.getElementById('p_dataFine').value = state.period.end;
-  document.getElementById('paramsOverlay').classList.remove('hide');
+function p_meseLungo(str){
+  if(!str) return '—';
+  const [y,m] = str.split('-').map(Number);
+  const nomi = ['','Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
+  return nomi[m] + ' ' + y;
 }
-document.getElementById('btnParams').addEventListener('click', openParams);
-document.getElementById('closeParams').addEventListener('click', ()=>document.getElementById('paramsOverlay').classList.add('hide'));
-document.getElementById('paramsOverlay').addEventListener('click', e=>{
-  if(e.target.id==='paramsOverlay') e.currentTarget.classList.add('hide');
-});
 
-document.getElementById('btnResetParams').addEventListener('click', ()=>{
-  state.params = {...DEFAULT_PARAMS};
-  state.period = defaultPeriod(state.rawRows);
-  openParams();
-});
+function chiudiModale(){ document.getElementById('modalRoot').innerHTML=''; }
 
-document.getElementById('btnApplyParams').addEventListener('click', ()=>{
-  state.params = {
-    soglia3: numVal('p_soglia3', DEFAULT_PARAMS.soglia3),
-    soglia4: numVal('p_soglia4', DEFAULT_PARAMS.soglia4),
-    soglia5: numVal('p_soglia5', DEFAULT_PARAMS.soglia5),
-    gettone: numVal('p_gettone', DEFAULT_PARAMS.gettone),
-    retention: numVal('p_retention', DEFAULT_PARAMS.retention),
-    refMin: numVal('p_refMin', DEFAULT_PARAMS.refMin),
-    casseMin: numVal('p_casseMin', DEFAULT_PARAMS.casseMin),
-    finestraMesi: numVal('p_finestra', DEFAULT_PARAMS.finestraMesi),
-    ordineMin: numVal('p_ordineMin', DEFAULT_PARAMS.ordineMin)
-  };
-  const di = document.getElementById('p_dataInizio').value;
-  const df = document.getElementById('p_dataFine').value;
-  if(di && df){ state.period = {start:di, end:df}; }
+/* ---------------- 9. MODALE PARAMETRI ---------------- */
+function apriParametri(){
+  const p = STATE.parametri;
+  document.getElementById('modalRoot').innerHTML = `
+    <div class="overlay" onclick="if(event.target===this) chiudiModale()">
+      <div class="modal">
+        <div class="modal-header">
+          <div>
+            <h2>Parametri piano incentivi</h2>
+            <p>Ogni modifica ricalcola istantaneamente tutti i premi mostrati in dashboard.</p>
+          </div>
+          <button class="modal-close" onclick="chiudiModale()">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="param-grid">
+            <div class="param-divider">Premio attivazione a scala</div>
+            <div class="param-field"><label>3 referenze (€)</label><input type="number" id="p_premio3" value="${p.premio3}"></div>
+            <div class="param-field"><label>4 referenze (€)</label><input type="number" id="p_premio4" value="${p.premio4}"></div>
+            <div class="param-field"><label>5+ referenze (€)</label><input type="number" id="p_premio5" value="${p.premio5}"></div>
+            <div class="param-field"><label>Referenze minime per qualificare</label><input type="number" id="p_referenzeMinime" value="${p.referenzeMinime}"></div>
 
-  document.getElementById('paramsOverlay').classList.add('hide');
+            <div class="param-divider">Gettone prestige &amp; retention</div>
+            <div class="param-field"><label>Gettone EBB/Parosé (€)</label><input type="number" id="p_gettonePrestige" value="${p.gettonePrestige}"></div>
+            <div class="param-field"><label>Retention per cliente netto (€)</label><input type="number" id="p_retentionValore" value="${p.retentionValore}"></div>
+
+            <div class="param-divider">Regole di qualificazione</div>
+            <div class="param-field">
+              <label>Casse minime per referenza valida</label>
+              <input type="number" id="p_casseMinimePerReferenza" value="${p.casseMinimePerReferenza}">
+              <span class="hint">1 cassa = 6 bottiglie</span>
+            </div>
+            <div class="param-field">
+              <label>Finestra cliente nuovo/perso (mesi)</label>
+              <input type="number" id="p_finestraMesi" value="${p.finestraMesi}">
+            </div>
+            <div class="param-field">
+              <label>Ordine minimo per qualificare (casse totali)</label>
+              <input type="number" id="p_ordineMinimoCasse" value="${p.ordineMinimoCasse}">
+              <span class="hint">Default 8 = 7 pagate + 1 omaggio (7+1)</span>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-top:22px;">
+            <button class="btn btn-ghost btn-sm" onclick="ripristinaDefault()">Ripristina valori di default</button>
+            <button class="btn btn-primary" onclick="salvaParametri()">Applica e ricalcola</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function salvaParametri(){
+  const p = STATE.parametri;
+  const campi = ['premio3','premio4','premio5','referenzeMinime','gettonePrestige','retentionValore','casseMinimePerReferenza','finestraMesi','ordineMinimoCasse'];
+  campi.forEach(c=>{
+    const v = parseFloat(document.getElementById('p_'+c).value);
+    if(!isNaN(v)) p[c] = v;
+  });
+  ricalcola();
+  salvaLocale();
+  chiudiModale();
   renderDashboard();
-  saveState();
-  showToast('Parametri applicati: dashboard ricalcolata');
-});
-function numVal(id, fallback){
-  const v = parseFloat(document.getElementById(id).value);
-  return isNaN(v) ? fallback : v;
 }
 
-/* ---------------------------- EXPORT ---------------------------- */
-document.getElementById('btnExport').addEventListener('click', ()=>{
-  const wb = XLSX.utils.book_new();
+function ripristinaDefault(){
+  const periodoAttuale = { periodoInizio: STATE.parametri.periodoInizio, periodoFine: STATE.parametri.periodoFine };
+  STATE.parametri = { ...JSON.parse(JSON.stringify(PARAMETRI_DEFAULT)), ...periodoAttuale };
+  ricalcola();
+  salvaLocale();
+  apriParametri();
+  renderDashboard();
+}
 
-  const rows = state.results.agents.map(a=>({
-    'Codice Agente': a.codAge,
-    'Nome Agente': a.nome,
-    'Zona': a.zona,
-    'Nuovi qualificati': a.nuoviCount,
-    'Persi': a.persiCount,
-    'Saldo netto': a.saldoNetto,
-    'Premi attivazione (€)': Math.round(a.sumAttiv),
-    'Gettoni prestige (€)': Math.round(a.sumPrestige),
-    'Bonus retention (€)': Math.round(a.retentionVal),
-    'Totale da liquidare (€)': Math.round(a.totale)
+/* ---------------- 10. EXPORT EXCEL ---------------- */
+function esportaExcel(){
+  const p = STATE.parametri;
+  const righeTabella = STATE.risultati.slice().sort((a,b)=>b.totale-a.totale).map(r=>({
+    'Agente': r.nome,
+    'Nuovi clienti qualificati': r.nuoviQualificati,
+    'Clienti persi': r.persiCount,
+    'Saldo netto': r.saldoNetto,
+    'Premi attivazione (€)': Math.round(r.totPremiAttivazione),
+    'Gettoni prestige (€)': Math.round(r.totGettoni),
+    'Retention (€)': Math.round(r.retention),
+    'Totale da liquidare (€)': Math.round(r.totale)
   }));
-  const wsAgenti = XLSX.utils.json_to_sheet(rows);
-  XLSX.utils.book_append_sheet(wb, wsAgenti, 'Riepilogo agenti');
 
-  const t = state.results.totals;
-  const wsTot = XLSX.utils.json_to_sheet([
-    {Voce:'Totale premi attivazione (€)', Valore: Math.round(t.totAttivRete)},
-    {Voce:'Totale gettoni prestige (€)', Valore: Math.round(t.totPrestigeRete)},
-    {Voce:'Totale bonus retention (€)', Valore: Math.round(t.totRetentionRete)},
-    {Voce:'TOTALE RETE DA LIQUIDARE (€)', Valore: Math.round(t.totRete)},
-    {Voce:'Agenti con premi maturati', Valore: t.agentiConPremi},
-  ]);
-  XLSX.utils.book_append_sheet(wb, wsTot, 'Totali rete');
+  const totRow = {
+    'Agente': 'TOTALE RETE',
+    'Nuovi clienti qualificati': STATE.risultati.reduce((s,a)=>s+a.nuoviQualificati,0),
+    'Clienti persi': STATE.risultati.reduce((s,a)=>s+a.persiCount,0),
+    'Saldo netto': STATE.risultati.reduce((s,a)=>s+a.saldoNetto,0),
+    'Premi attivazione (€)': Math.round(STATE.risultati.reduce((s,a)=>s+a.totPremiAttivazione,0)),
+    'Gettoni prestige (€)': Math.round(STATE.risultati.reduce((s,a)=>s+a.totGettoni,0)),
+    'Retention (€)': Math.round(STATE.risultati.reduce((s,a)=>s+a.retention,0)),
+    'Totale da liquidare (€)': Math.round(STATE.risultati.reduce((s,a)=>s+a.totale,0))
+  };
+  righeTabella.push(totRow);
 
-  const p = state.params;
-  const wsParams = XLSX.utils.json_to_sheet([
-    {Parametro:'Premio 3 referenze (€)', Valore:p.soglia3},
-    {Parametro:'Premio 4 referenze (€)', Valore:p.soglia4},
-    {Parametro:'Premio 5+ referenze (€)', Valore:p.soglia5},
-    {Parametro:'Gettone prestige (€)', Valore:p.gettone},
-    {Parametro:'Retention per cliente netto (€)', Valore:p.retention},
-    {Parametro:'Referenze minime per qualificare', Valore:p.refMin},
-    {Parametro:'Casse minime per referenza valida', Valore:p.casseMin},
-    {Parametro:'Finestra cliente nuovo/perso (mesi)', Valore:p.finestraMesi},
-    {Parametro:'Ordine minimo per qualificare (casse)', Valore:p.ordineMin},
-    {Parametro:'Periodo campagna - inizio', Valore:state.period.start},
-    {Parametro:'Periodo campagna - fine', Valore:state.period.end},
-  ]);
-  XLSX.utils.book_append_sheet(wb, wsParams, 'Parametri usati');
+  const parametriRighe = [
+    {Parametro:'Periodo campagna', Valore: p.periodoInizio + ' → ' + p.periodoFine},
+    {Parametro:'Premio 3 referenze', Valore: p.premio3 + ' €'},
+    {Parametro:'Premio 4 referenze', Valore: p.premio4 + ' €'},
+    {Parametro:'Premio 5+ referenze', Valore: p.premio5 + ' €'},
+    {Parametro:'Gettone prestige EBB/Parosé', Valore: p.gettonePrestige + ' €'},
+    {Parametro:'Retention per cliente netto', Valore: p.retentionValore + ' €'},
+    {Parametro:'Referenze minime per qualificare', Valore: p.referenzeMinime},
+    {Parametro:'Casse minime per referenza valida', Valore: p.casseMinimePerReferenza},
+    {Parametro:'Finestra cliente nuovo/perso (mesi)', Valore: p.finestraMesi},
+    {Parametro:'Ordine minimo per qualificare (casse totali)', Valore: p.ordineMinimoCasse},
+    {Parametro:'Data/ora esportazione', Valore: new Date().toLocaleString('it-IT')}
+  ];
 
-  const fname = `Canvass_Mosnel_Liquidazione_${state.period.start}_${state.period.end}.xlsx`;
-  XLSX.writeFile(wb, fname);
-  showToast('Export completato: '+fname);
-});
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(righeTabella), 'Riepilogo agenti');
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(parametriRighe), 'Parametri usati');
+  XLSX.writeFile(wb, `Canvass_Liquidazione_${p.periodoInizio}_${p.periodoFine}.xlsx`);
+}
 
-/* ---------------------------- AVVIO ---------------------------- */
-(function init(){
-  const saved = loadState();
-  if(saved && saved.rawRows && saved.rawRows.length>0){
-    state.rawRows = saved.rawRows;
-    state.meta = saved.meta;
-    state.params = saved.params || {...DEFAULT_PARAMS};
-    state.period = saved.period || defaultPeriod(state.rawRows);
-    setScreen('dashboard');
-    renderDashboard();
-    showToast('Calcolo precedente ripristinato dal browser');
-  }else if(saved && saved.tooLarge){
-    showToast('Il dataset precedente era troppo grande per essere salvato: ricarica il file Excel');
-    setScreen('import');
-  }else{
-    setScreen('import');
+/* ---------------- 11. SALVATAGGIO / RIPRESA LOCALE ---------------- */
+/*
+  Nota: window.localStorage funziona nell'ambiente reale (es. hostato su
+  GitHub Pages, come gli altri tool Mosnel) ma puo' non persistere se il file
+  viene aperto in anteprima sandbox di Claude. In quel caso l'app funziona
+  comunque, semplicemente non ricorda tra una sessione e l'altra.
+*/
+function salvaLocale(){
+  try{
+    localStorage.setItem(LS_KEY, JSON.stringify({
+      rows: STATE.rows, importReport: STATE.importReport,
+      parametri: STATE.parametri, savedAt: new Date().toISOString()
+    }));
+  }catch(e){ /* storage non disponibile: si prosegue senza persistenza */ }
+}
+
+function caricaLocale(){
+  try{
+    const raw = localStorage.getItem(LS_KEY);
+    if(!raw) return null;
+    return JSON.parse(raw);
+  }catch(e){ return null; }
+}
+
+function riprendiSessione(dati){
+  STATE.rows = dati.rows;
+  STATE.orders = buildOrders(dati.rows);
+  STATE.importReport = dati.importReport;
+  STATE.parametri = dati.parametri;
+  ricalcola();
+  vaiAllaDashboard();
+}
+
+/* ---------------- 12. AVVIO ---------------- */
+function avvia(){
+  renderTopbar();
+  renderImportScreen();
+
+  const salvato = caricaLocale();
+  if(salvato && salvato.rows && salvato.rows.length>0){
+    window.__sessioneSalvata = salvato; // evita di iniettare JSON enorme in un attributo HTML
+    const wrap = document.getElementById('importReportWrap');
+    const dataSalvataggio = new Date(salvato.savedAt).toLocaleString('it-IT');
+    const banner = document.createElement('div');
+    banner.className = 'import-report';
+    banner.innerHTML = `
+      <h3>Calcolo precedente trovato</h3>
+      <p style="font-size:13px;color:var(--testo-mut);margin:0 0 14px;">
+        Ultimo salvataggio: ${dataSalvataggio} — ${salvato.rows.length.toLocaleString('it-IT')} righe importate.
+      </p>
+      <div style="display:flex;gap:10px;justify-content:flex-end;">
+        <button class="btn btn-ghost btn-sm" onclick="this.closest('.import-report').remove()">Ignora</button>
+        <button class="btn btn-primary btn-sm" onclick="riprendiSessione(window.__sessioneSalvata)">Riprendi ultimo calcolo →</button>
+      </div>
+    `;
+    wrap.prepend(banner);
   }
-})();
+}
+avvia();
 </script>
 </body>
 </html>
