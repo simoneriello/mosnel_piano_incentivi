@@ -160,6 +160,7 @@ tbody td{padding:11px 14px;}
 .event-row{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:10px;background:#f8faf7;margin-bottom:6px;font-size:13.5px;}
 .event-row .ev-left{display:flex;flex-direction:column;}
 .event-row .ev-cli{font-weight:600;}
+.ev-code{font-weight:400;color:var(--testo-mut);font-size:11px;margin-left:5px;}
 .event-row .ev-meta{font-size:11.5px;color:var(--testo-mut);}
 .event-tag{font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:6px;text-transform:uppercase;letter-spacing:.03em;}
 .tag-attivazione{background:var(--verde-tint2);color:var(--verde-testo);}
@@ -297,6 +298,7 @@ function processaImport(json){
 
     rows.push({
       codCli: normalizza(r.Cod_Cli),
+      ragioneSociale: normalizza(r.Ragione_Sociale),
       codAge: codAge || nomeAgente,
       nomeAgente: nomeAgente || ('Agente ' + codAge),
       anno, mese,
@@ -322,6 +324,7 @@ function processaImport(json){
 
   STATE.rows = rows;
   STATE.orders = orders;
+  STATE.nomiClienti = buildNomiClienti(rows);
   STATE.importReport = {
     totRighe: json.length,
     righeValide: rows.length,
@@ -361,6 +364,23 @@ function buildOrders(rows){
     o.importoNetto += r.importoNetto;
   });
   return Array.from(map.values());
+}
+
+// Ricava il nome cliente (ragione sociale) da mostrare al posto del solo Cod_Cli.
+// Nel file sorgente non e' presente una colonna "Insegna" separata: si usa la ragione sociale.
+function buildNomiClienti(rows){
+  const map = new Map();
+  rows.forEach(r=>{
+    if(!map.has(r.codCli) && r.ragioneSociale){
+      map.set(r.codCli, r.ragioneSociale);
+    }
+  });
+  return map;
+}
+
+function nomeCliente(codCli){
+  const nome = STATE.nomiClienti && STATE.nomiClienti.get(codCli);
+  return nome || ('Cliente ' + codCli);
 }
 
 /* ---------------- 4. MOTORE DI CALCOLO PREMI ---------------- */
@@ -699,7 +719,7 @@ const COLONNE = [
   {key:'persiCount', label:'Persi', num:true},
   {key:'saldoNetto', label:'Saldo netto', num:true},
   {key:'totPremiAttivazione', label:'Premi attiv.', num:true},
-  {key:'totGettoni', label:'Gettoni', num:true},
+  {key:'totGettoni', label:'Prestige', num:true},
   {key:'retention', label:'Retention', num:true},
   {key:'totale', label:'Totale', num:true}
 ];
@@ -763,7 +783,7 @@ function apriDettaglioAgente(codAge){
   const eventiAttivazione = ag.attivazioni.slice().sort((a,b)=>b.monthIndex-a.monthIndex).map(a=>`
     <div class="event-row">
       <div class="ev-left">
-        <span class="ev-cli">Cliente ${a.codCli}</span>
+        <span class="ev-cli">${nomeCliente(a.codCli)}<span class="ev-code">#${a.codCli}</span></span>
         <span class="ev-meta">${meseLabel(a.monthIndex)} · ${a.fascia}+ referenze (${a.referenze.join(', ')})</span>
       </div>
       <div style="display:flex;align-items:center;gap:10px;">
@@ -776,11 +796,11 @@ function apriDettaglioAgente(codAge){
   const eventiGettone = ag.gettoni.slice().sort((a,b)=>b.monthIndex-a.monthIndex).map(g=>`
     <div class="event-row">
       <div class="ev-left">
-        <span class="ev-cli">Cliente ${g.codCli}</span>
+        <span class="ev-cli">${nomeCliente(g.codCli)}<span class="ev-code">#${g.codCli}</span></span>
         <span class="ev-meta">${meseLabel(g.monthIndex)} · prima volta ${g.referenza}</span>
       </div>
       <div style="display:flex;align-items:center;gap:10px;">
-        <span class="event-tag tag-gettone">Gettone</span>
+        <span class="event-tag tag-gettone">Prestige</span>
         <span class="ev-value">${fmt(g.importo)}</span>
       </div>
     </div>
@@ -789,7 +809,7 @@ function apriDettaglioAgente(codAge){
   const eventiPersi = ag.persi.slice().sort((a,b)=>b.ultimoAcquisto-a.ultimoAcquisto).map(p=>`
     <div class="event-row">
       <div class="ev-left">
-        <span class="ev-cli">Cliente ${p.codCli}</span>
+        <span class="ev-cli">${nomeCliente(p.codCli)}<span class="ev-code">#${p.codCli}</span></span>
         <span class="ev-meta">ultimo acquisto ${meseLabel(p.ultimoAcquisto)} · fermo da ${p.mesiDormienza} mesi</span>
       </div>
       <span class="event-tag tag-perso">Perso</span>
@@ -983,6 +1003,7 @@ function caricaLocale(){
 function riprendiSessione(dati){
   STATE.rows = dati.rows;
   STATE.orders = buildOrders(dati.rows);
+  STATE.nomiClienti = buildNomiClienti(dati.rows);
   STATE.importReport = dati.importReport;
   STATE.parametri = dati.parametri;
   ricalcola();
