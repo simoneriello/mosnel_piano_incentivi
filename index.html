@@ -7,35 +7,40 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 :root{
-  --verde-vivo:#22c55e;
-  --verde-vivo-dark:#16a34a;
-  --verde-scuro:#0b3d24;
-  --verde-testo:#14532d;
-  --verde-tint:#e9fbf0;
-  --verde-tint2:#d3f7e0;
-  --oro:#d4a017;
-  --oro-tint:#fff6e0;
-  --rosso-tenue:#e5675f;
-  --rosso-tint:#fdeceb;
-  --crema:#fbfbf7;
-  --carta:#ffffff;
-  --bordo:#e3e8e2;
-  --testo:#1c231e;
-  --testo-mut:#657165;
-  --ombra:0 1px 2px rgba(20,50,30,.06), 0 6px 20px -8px rgba(20,50,30,.15);
-  --raggio:16px;
-  --raggio-sm:10px;
+  --verde-vivo:#5a6b3a;        /* oliva — accento positivo (bottoni, badge saldo+) */
+  --verde-vivo-dark:#46542c;
+  --verde-scuro:#241c16;       /* inchiostro — titoli ed enfasi */
+  --verde-testo:#4c5a30;       /* testo su tint oliva */
+  --verde-tint:#eaeedd;        /* tint oliva chiaro */
+  --verde-tint2:#dde3c7;
+  --oro:#a9822e;               /* oro — prestige */
+  --oro-tint:#f5ecd6;
+  --rosso-tenue:#6b1f2a;       /* bordeaux — negativo/danger + accento brand */
+  --rosso-tint:#f3e2e0;
+  --bordeaux:#6b1f2a;
+  --bordeaux-dark:#4f1620;
+  --crema:#efe9de;             /* pergamena — sfondo pagina */
+  --carta:#fbf9f4;             /* crema chiaro — card */
+  --bordo:#e2d9c4;             /* hairline pergamena */
+  --header-bg:#f2ede0;         /* fondo neutro intestazione tabella */
+  --testo:#241c16;             /* inchiostro primario */
+  --testo-mut:#7a6f5f;         /* testo secondario */
+  --ombra:0 1px 2px rgba(36,28,22,.05), 0 4px 14px -6px rgba(36,28,22,.12);
+  --raggio:10px;
+  --raggio-sm:6px;
+  --font-display:'Playfair Display',serif;
+  --font-mono:'IBM Plex Mono',monospace;
 }
 *{box-sizing:border-box;}
 html,body{margin:0;padding:0;}
 body{
-  font-family:'Poppins',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  font-family:'Public Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
   background:var(--crema);
   color:var(--testo);
   min-height:100vh;
 }
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,700&display=swap');
-h1,h2,h3,.display{font-family:'Fraunces',serif;}
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap');
+h1,h2,h3,.display{font-family:var(--font-display);}
 
 /* ---------- layout shell ---------- */
 #app{max-width:1320px;margin:0 auto;padding:24px 28px 80px;}
@@ -46,32 +51,33 @@ h1,h2,h3,.display{font-family:'Fraunces',serif;}
 }
 .brand{display:flex;align-items:center;gap:12px;}
 .brand-mark{
-  width:42px;height:42px;border-radius:12px;
-  background:linear-gradient(135deg,var(--verde-vivo),var(--verde-vivo-dark));
-  display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:18px;
+  width:42px;height:42px;border-radius:8px;
+  background:var(--bordeaux);
+  display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:18px;
+  font-family:var(--font-display);
   box-shadow:var(--ombra);
 }
-.brand-title{font-family:'Fraunces',serif;font-weight:700;font-size:20px;color:var(--verde-scuro);line-height:1.1;}
+.brand-title{font-family:var(--font-display);font-weight:700;font-size:20px;color:var(--verde-scuro);line-height:1.1;}
 .brand-sub{font-size:12.5px;color:var(--testo-mut);margin-top:2px;}
 .topbar-actions{display:flex;gap:10px;flex-wrap:wrap;}
 
 button{font-family:inherit;cursor:pointer;border:none;}
 .btn{
-  padding:10px 16px;border-radius:999px;font-size:13.5px;font-weight:600;
+  padding:10px 16px;border-radius:8px;font-size:13.5px;font-weight:600;
   display:inline-flex;align-items:center;gap:6px;transition:transform .12s ease, box-shadow .12s ease;
 }
 .btn:active{transform:scale(.97);}
-.btn-primary{background:var(--verde-vivo);color:#fff;box-shadow:0 4px 14px -4px rgba(34,197,94,.55);}
+.btn-primary{background:var(--verde-vivo);color:#fff;box-shadow:0 4px 14px -4px rgba(90,107,58,.45);}
 .btn-primary:hover{background:var(--verde-vivo-dark);}
 .btn-ghost{background:var(--carta);color:var(--verde-testo);border:1px solid var(--bordo);}
 .btn-ghost:hover{border-color:var(--verde-vivo);}
 .btn-sm{padding:7px 12px;font-size:12.5px;}
-.btn-danger-ghost{background:var(--carta);color:var(--rosso-tenue);border:1px solid #f2d4d1;}
+.btn-danger-ghost{background:var(--carta);color:var(--rosso-tenue);border:1px solid #e6cac5;}
 
 /* ---------- import screen ---------- */
 .import-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;text-align:center;}
 .dropzone{
-  width:100%;max-width:640px;border:2px dashed #b9e6c8;border-radius:var(--raggio);
+  width:100%;max-width:640px;border:2px dashed #d9c9ae;border-radius:var(--raggio);
   background:var(--carta);padding:56px 32px;transition:.15s;
 }
 .dropzone.drag{border-color:var(--verde-vivo);background:var(--verde-tint);}
@@ -87,7 +93,7 @@ button{font-family:inherit;cursor:pointer;border:none;}
 .import-report h3{margin:0 0 12px;font-size:15px;color:var(--verde-scuro);}
 .import-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px;}
 .import-stat{background:var(--verde-tint);border-radius:var(--raggio-sm);padding:12px;text-align:center;}
-.import-stat b{display:block;font-size:20px;color:var(--verde-testo);font-family:'Fraunces',serif;}
+.import-stat b{display:block;font-size:20px;color:var(--verde-testo);font-family:var(--font-mono);}
 .import-stat span{font-size:11px;color:var(--testo-mut);}
 .import-warn{font-size:12.5px;color:var(--testo-mut);background:#f7f7f2;border-radius:8px;padding:10px 12px;margin-top:6px;}
 .import-warn b{color:var(--rosso-tenue);}
@@ -110,46 +116,57 @@ button{font-family:inherit;cursor:pointer;border:none;}
 }
 .search-box input{border:none;outline:none;font-family:inherit;font-size:13px;flex:1;background:transparent;}
 
-.summary-cards{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:16px;margin-bottom:24px;}
-.card{background:var(--carta);border:1px solid var(--bordo);border-radius:var(--raggio);padding:20px 22px;box-shadow:var(--ombra);}
-.card-total{background:linear-gradient(135deg,var(--verde-vivo),var(--verde-vivo-dark));color:#fff;border:none;}
-.card-label{font-size:12px;letter-spacing:.04em;text-transform:uppercase;opacity:.85;font-weight:600;}
-.card-total .card-label{color:#eafff0;}
+.orologio-note{
+  background:var(--oro-tint);border:1px solid #e2cc98;border-radius:8px;
+  padding:11px 16px;font-size:12.5px;color:#5c4508;margin-bottom:18px;line-height:1.5;
+}
+.orologio-note b{color:#43310a;}
+
+.summary-cards{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:12px;margin-bottom:24px;}
+.card{background:var(--carta);border:1px solid var(--bordo);border-radius:var(--raggio);padding:18px 20px;box-shadow:var(--ombra);}
+.card-total{background:var(--bordeaux);color:#fff;border:none;}
+.card-label{font-size:11.5px;letter-spacing:.04em;text-transform:uppercase;opacity:.85;font-weight:600;}
+.card-total .card-label{color:#f0d6d3;}
 .card:not(.card-total) .card-label{color:var(--testo-mut);}
-.card-value{font-family:'Fraunces',serif;font-weight:700;font-size:34px;margin-top:6px;}
-.card-total .card-value{font-size:44px;}
+.card-value{font-family:var(--font-mono);font-weight:600;font-size:28px;margin-top:6px;}
+.card-total .card-value{font-size:36px;}
 .card-sub{font-size:12px;margin-top:6px;opacity:.8;}
 
 .table-wrap{background:var(--carta);border:1px solid var(--bordo);border-radius:var(--raggio);overflow:hidden;box-shadow:var(--ombra);}
 table{width:100%;border-collapse:collapse;font-size:13.5px;}
 thead th{
-  text-align:left;padding:12px 14px;background:var(--verde-tint);color:var(--verde-testo);
-  font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.03em;cursor:pointer;white-space:nowrap;
-  position:sticky;top:0;
+  text-align:left;padding:12px 14px;background:var(--header-bg);color:var(--testo-mut);
+  font-weight:600;font-size:11.5px;text-transform:uppercase;letter-spacing:.03em;cursor:pointer;white-space:nowrap;
+  position:sticky;top:0;border-bottom:2px solid var(--bordeaux);
 }
-thead th:hover{background:var(--verde-tint2);}
-tbody tr{border-top:1px solid var(--bordo);cursor:pointer;transition:background .1s;}
+thead th:hover{color:var(--verde-testo);}
+tbody tr{border-top:1px solid var(--bordo);border-left:3px solid transparent;cursor:pointer;transition:background .1s;}
+tbody tr.row-pos{border-left-color:var(--verde-vivo);}
+tbody tr.row-neg{border-left-color:var(--bordeaux);}
+tbody tr.row-zero{border-left-color:#cbc3ab;}
 tbody tr:hover{background:var(--verde-tint);}
 tbody td{padding:11px 14px;}
-.num{text-align:right;font-variant-numeric:tabular-nums;}
-.tot-cell{font-weight:700;color:var(--verde-testo);}
+tbody td:first-child{font-weight:500;}
+.num{text-align:right;font-variant-numeric:tabular-nums;font-family:var(--font-mono);}
+.tot-cell{font-weight:600;color:var(--verde-testo);}
 .saldo-badge{
   display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:999px;font-size:12px;font-weight:600;
+  font-family:var(--font-mono);
 }
 .saldo-pos{background:var(--verde-tint2);color:var(--verde-testo);}
 .saldo-neg{background:var(--rosso-tint);color:var(--rosso-tenue);}
-.saldo-zero{background:#f1f1ec;color:var(--testo-mut);}
+.saldo-zero{background:#f1ede1;color:var(--testo-mut);}
 .dot{width:7px;height:7px;border-radius:50%;display:inline-block;}
 .dot-pos{background:var(--verde-vivo);}
 .dot-neg{background:var(--rosso-tenue);}
-.dot-zero{background:#b9b9ae;}
+.dot-zero{background:#cbc3ab;}
 
 /* ---------- modal ---------- */
 .overlay{
-  position:fixed;inset:0;background:rgba(11,61,36,.35);backdrop-filter:blur(2px);
+  position:fixed;inset:0;background:rgba(36,28,22,.4);backdrop-filter:blur(2px);
   display:flex;align-items:flex-start;justify-content:center;padding:40px 20px;z-index:50;overflow-y:auto;
 }
-.modal{background:var(--carta);border-radius:20px;max-width:760px;width:100%;box-shadow:0 20px 60px -12px rgba(11,61,36,.35);}
+.modal{background:var(--carta);border-radius:14px;max-width:760px;width:100%;box-shadow:0 20px 60px -12px rgba(36,28,22,.35);}
 .modal-header{display:flex;align-items:flex-start;justify-content:space-between;padding:24px 26px 16px;border-bottom:1px solid var(--bordo);}
 .modal-header h2{margin:0;font-size:21px;color:var(--verde-scuro);}
 .modal-header p{margin:4px 0 0;font-size:13px;color:var(--testo-mut);}
@@ -157,34 +174,34 @@ tbody td{padding:11px 14px;}
 .modal-body{padding:20px 26px 26px;max-height:70vh;overflow-y:auto;}
 .modal-section{margin-bottom:22px;}
 .modal-section h4{font-size:12.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--testo-mut);margin:0 0 10px;}
-.event-row{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:10px;background:#f8faf7;margin-bottom:6px;font-size:13.5px;}
+.event-row{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:6px;background:#f5f1e6;margin-bottom:6px;font-size:13.5px;}
 .event-row .ev-left{display:flex;flex-direction:column;}
 .event-row .ev-cli{font-weight:600;}
-.ev-code{font-weight:400;color:var(--testo-mut);font-size:11px;margin-left:5px;}
+.ev-code{font-weight:400;color:var(--testo-mut);font-size:11px;margin-left:5px;font-family:var(--font-mono);}
 .event-row .ev-meta{font-size:11.5px;color:var(--testo-mut);}
-.event-tag{font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:6px;text-transform:uppercase;letter-spacing:.03em;}
+.event-tag{font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:5px;text-transform:uppercase;letter-spacing:.03em;}
 .tag-attivazione{background:var(--verde-tint2);color:var(--verde-testo);}
 .tag-gettone{background:var(--oro-tint);color:var(--oro);}
 .tag-perso{background:var(--rosso-tint);color:var(--rosso-tenue);}
-.ev-value{font-weight:700;font-variant-numeric:tabular-nums;}
+.ev-value{font-weight:600;font-variant-numeric:tabular-nums;font-family:var(--font-mono);}
 .empty-note{font-size:13px;color:var(--testo-mut);font-style:italic;padding:8px 0;}
 .modal-total{
   display:flex;justify-content:space-between;align-items:center;background:var(--verde-scuro);color:#fff;
-  border-radius:14px;padding:16px 20px;margin-top:6px;
+  border-radius:10px;padding:16px 20px;margin-top:6px;
 }
-.modal-total b{font-family:'Fraunces',serif;font-size:26px;}
+.modal-total b{font-family:var(--font-mono);font-size:24px;}
 
 /* ---------- parametri modal ---------- */
 .param-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 18px;}
 .param-field{display:flex;flex-direction:column;gap:5px;}
 .param-field label{font-size:12px;color:var(--testo-mut);font-weight:600;}
-.param-field .hint{font-size:10.5px;color:#9aa39a;}
+.param-field .hint{font-size:10.5px;color:#a89a7d;}
 .param-field input{
-  border:1px solid var(--bordo);border-radius:10px;padding:9px 11px;font-family:inherit;font-size:14px;
+  border:1px solid var(--bordo);border-radius:8px;padding:9px 11px;font-family:var(--font-mono);font-size:14px;
   background:var(--crema);
 }
 .param-field input:focus{outline:none;border-color:var(--verde-vivo);background:#fff;}
-.param-divider{grid-column:1/-1;border-top:1px solid var(--bordo);margin:6px 0;padding-top:10px;font-size:12px;font-weight:700;color:var(--verde-testo);text-transform:uppercase;letter-spacing:.03em;}
+.param-divider{grid-column:1/-1;border-top:1px solid var(--bordo);margin:6px 0;padding-top:10px;font-size:12px;font-weight:700;color:var(--bordeaux);text-transform:uppercase;letter-spacing:.03em;}
 
 .footer-note{text-align:center;color:var(--testo-mut);font-size:11.5px;margin-top:36px;}
 </style>
@@ -250,6 +267,7 @@ let STATE = {
 };
 
 const LS_KEY = 'canvass_mosnel_v1';
+const SCHEMA_VERSION = 2; // incrementare ogni volta che cambia la struttura dei dati salvati
 
 /* ---------------- 3. IMPORT & FILTRI EXCEL ---------------- */
 
@@ -413,10 +431,10 @@ function motoreCalcolo(orders, parametri){
   });
   clientMap.forEach(list=>list.sort((a,b)=>a.monthIndex-b.monthIndex));
 
-  const agentiMap = new Map(); // codAge -> risultati
+  const agentiMap = new Map(); // codAge -> risultati (solo Orologio 1: attivazioni + gettoni)
   function agente(codAge, nome){
     if(!agentiMap.has(codAge)){
-      agentiMap.set(codAge, { codAge, nome, attivazioni:[], gettoni:[], persi:[] });
+      agentiMap.set(codAge, { codAge, nome, attivazioni:[], gettoni:[] });
     }
     const a = agentiMap.get(codAge);
     if(nome) a.nome = nome;
@@ -478,47 +496,111 @@ function motoreCalcolo(orders, parametri){
         paroseGiaAvuto = true;
       }
     });
-
-    // ---- 4.3 CLIENTI PERSI (dormienti da almeno `finestraMesi` mesi pieni, misurato a fine periodo) ----
-    // Nota: non richiede piu' che il cliente fosse "attivo appena prima" del periodo. Si guarda
-    // l'ultimo ordine registrato fino alla fine del periodo (endIdx compreso) e si calcolano i mesi
-    // trascorsi da allora. Se un cliente dormiente viene RIATTIVATO durante il periodo, il suo ultimo
-    // ordine ricade dentro il periodo stesso, quindi automaticamente non risulta piu' "perso": va a
-    // sommarsi invece alle nuove attivazioni (vedi 4.1). Questo evita di penalizzare un agente due
-    // volte per lo stesso cliente e rende il saldo netto uno specchio reale del lavoro fatto nel periodo.
-    const ordiniFinoAFinePeriodo = storicoOrdini.filter(o => o.monthIndex <= endIdx);
-    if(ordiniFinoAFinePeriodo.length > 0){
-      const ultimo = ordiniFinoAFinePeriodo[ordiniFinoAFinePeriodo.length-1];
-      const mesiDormienza = endIdx - ultimo.monthIndex;
-      if(mesiDormienza >= finestraMesi){
-        const ag = agente(ultimo.codAge, ultimo.nomeAgente);
-        ag.persi.push({ codCli, ultimoAcquisto: ultimo.monthIndex, mesiDormienza });
-      }
-    }
   });
 
-  // ---- 4.4 TOTALI PER AGENTE ----
-  const risultati = Array.from(agentiMap.values()).map(ag=>{
+  // ---- 4.4 TOTALI PER AGENTE (solo Orologio 1: premi attivazione + gettoni) ----
+  const risultati = new Map();
+  agentiMap.forEach((ag, codAge)=>{
     const totPremiAttivazione = ag.attivazioni.reduce((s,a)=>s+a.premio, 0);
     const totGettoni = ag.gettoni.reduce((s,g)=>s+g.importo, 0);
-    const saldoNetto = ag.attivazioni.length - ag.persi.length;
-    const retention = saldoNetto > 0 ? saldoNetto * retentionValore : 0;
-    return {
+    risultati.set(codAge, {
       ...ag,
-      nuoviQualificati: ag.attivazioni.length,
-      persiCount: ag.persi.length,
-      saldoNetto,
-      totPremiAttivazione, totGettoni, retention,
-      totale: totPremiAttivazione + totGettoni + retention
-    };
+      nuoviQualificati: ag.attivazioni.length, // premio-qualificati: 3+ referenze, ordine minimo (leva 1)
+      totPremiAttivazione, totGettoni
+    });
   });
 
   return risultati;
 }
 
+/* ---------------- 4bis. MOTORE SALDO NETTO ANNUO — "OROLOGIO 2" (indipendente dal periodo campagna) ---------------- */
+/*
+  Un cliente HORECA tipico riordina ogni 3-4 mesi: se il saldo netto (usato SOLO per il bonus
+  retention) venisse calcolato guardando solo i mesi della campagna (es. Set-Dic, 4 mesi), qualunque
+  cliente il cui ciclo di riordino non cada per caso in quella finestra corta risulterebbe "perso"
+  anche se in realta' e' un cliente regolare che comprera' a gennaio o a maggio.
+
+  Per questo il saldo netto usa un orologio completamente separato dal periodo campagna:
+  - Si guardano SEMPRE i 12 mesi pieni che terminano con la fine del periodo campagna (periodoFine),
+    a prescindere da quale inizio periodo l'utente abbia scelto in dashboard.
+  - Si confrontano con i 12 mesi pieni immediatamente precedenti.
+  - Per ogni agente si calcola l'insieme dei clienti da lui serviti in ciascuna delle due finestre
+    (non "a quale agente attribuire il singolo cliente": un cliente puo' benissimo comparire nella
+    finestra di un agente e in quella di un altro se e' stato riassegnato nel tempo — si guarda cosa
+    e' successo REALMENTE sotto ciascun agente, finestra per finestra).
+  - Nuovi netti (per l'agente) = clienti presenti nella finestra corrente ma non in quella precedente.
+  - Persi netti (per l'agente)  = clienti presenti nella finestra precedente ma non in quella corrente.
+  Questi due insiemi possono includere ordini che cadono FUORI dal periodo campagna scelto (es. un
+  cliente che ha comprato a marzo e non e' piu' tornato: e' "perso" ai fini della retention anche se
+  marzo non fa parte del periodo Set-Dic).
+*/
+function calcolaSaldoNettoAnnuo(orders, parametri){
+  const endIdx = meseAIndice(parametri.periodoFine);
+  const finestra = parametri.finestraMesi;
+  const winBStart = endIdx - finestra + 1, winBEnd = endIdx;               // finestra corrente
+  const winAStart = winBStart - finestra, winAEnd = winBStart - 1;         // finestra precedente
+
+  const clientiB = new Map(); // codAge -> Map(codCli -> ultimo ordine in finestra B, per data display)
+  const clientiA = new Map(); // codAge -> Map(codCli -> ultimo ordine in finestra A)
+  const nomi = new Map();
+
+  orders.forEach(o=>{
+    nomi.set(o.codAge, o.nomeAgente);
+    if(o.monthIndex >= winBStart && o.monthIndex <= winBEnd){
+      if(!clientiB.has(o.codAge)) clientiB.set(o.codAge, new Map());
+      const m = clientiB.get(o.codAge);
+      if(!m.has(o.codCli) || o.monthIndex < m.get(o.codCli)) m.set(o.codCli, o.monthIndex); // primo ordine nella finestra
+    }
+    if(o.monthIndex >= winAStart && o.monthIndex <= winAEnd){
+      if(!clientiA.has(o.codAge)) clientiA.set(o.codAge, new Map());
+      const m = clientiA.get(o.codAge);
+      if(!m.has(o.codCli) || o.monthIndex > m.get(o.codCli)) m.set(o.codCli, o.monthIndex); // ultimo ordine nella finestra
+    }
+  });
+
+  const tuttiAgenti = new Set([...clientiB.keys(), ...clientiA.keys()]);
+  const risultato = new Map();
+  tuttiAgenti.forEach(codAge=>{
+    const mapB = clientiB.get(codAge) || new Map();
+    const mapA = clientiA.get(codAge) || new Map();
+    const nuoviNetti = [];
+    mapB.forEach((monthIndex, codCli)=>{ if(!mapA.has(codCli)) nuoviNetti.push({ codCli, monthIndex }); });
+    const persiNetti = [];
+    mapA.forEach((monthIndex, codCli)=>{ if(!mapB.has(codCli)) persiNetti.push({ codCli, ultimoAcquisto: monthIndex }); });
+    risultato.set(codAge, { codAge, nome: nomi.get(codAge), nuoviNetti, persiNetti, winBStart, winBEnd, winAStart, winAEnd });
+  });
+  return risultato;
+}
+
+/* ---------------- 4ter. UNIONE DEI DUE OROLOGI + TOTALI FINALI PER AGENTE ---------------- */
 function ricalcola(){
   if(STATE.orders.length===0) return;
-  STATE.risultati = motoreCalcolo(STATE.orders, STATE.parametri);
+  const orologio1 = motoreCalcolo(STATE.orders, STATE.parametri);   // attivazioni + gettoni (periodo campagna)
+  const orologio2 = calcolaSaldoNettoAnnuo(STATE.orders, STATE.parametri); // saldo netto annuo (retention)
+
+  const tuttiAgenti = new Set([...orologio1.keys(), ...orologio2.keys()]);
+  const retentionValore = STATE.parametri.retentionValore;
+
+  const risultati = [];
+  tuttiAgenti.forEach(codAge=>{
+    const o1 = orologio1.get(codAge) || { codAge, nome:null, attivazioni:[], gettoni:[], nuoviQualificati:0, totPremiAttivazione:0, totGettoni:0 };
+    const o2 = orologio2.get(codAge) || { codAge, nome:null, nuoviNetti:[], persiNetti:[] };
+    const nome = o1.nome || o2.nome || codAge;
+    const saldoNetto = o2.nuoviNetti.length - o2.persiNetti.length;
+    const retention = saldoNetto > 0 ? saldoNetto * retentionValore : 0;
+    risultati.push({
+      codAge, nome,
+      attivazioni: o1.attivazioni, gettoni: o1.gettoni,
+      nuoviQualificati: o1.nuoviQualificati,
+      totPremiAttivazione: o1.totPremiAttivazione, totGettoni: o1.totGettoni,
+      nuoviNetti: o2.nuoviNetti, persiNetti: o2.persiNetti,
+      nuoviNettiCount: o2.nuoviNetti.length, persiNettiCount: o2.persiNetti.length,
+      saldoNetto, retention,
+      totale: o1.totPremiAttivazione + o1.totGettoni + retention
+    });
+  });
+
+  STATE.risultati = risultati;
 }
 
 /* ---------------- 5. RENDER: TOPBAR ---------------- */
@@ -665,6 +747,13 @@ function renderDashboard(){
       </div>
     </div>
 
+    <div class="orologio-note">
+      ℹ️ <b>Premi attivazione</b> e <b>gettoni prestige</b> sono calcolati sul periodo campagna qui sopra.
+      <b>Saldo netto e retention</b> invece guardano sempre i ${p.finestraMesi} mesi pieni terminanti a
+      <b>${p_meseLungo(p.periodoFine)}</b> confrontati con i ${p.finestraMesi} mesi precedenti — non solo sul periodo campagna —
+      per non penalizzare i clienti con cicli di riordino più lunghi dei mesi selezionati.
+    </div>
+
     <div class="summary-cards">
       <div class="card card-total">
         <div class="card-label">Totale da liquidare</div>
@@ -715,8 +804,8 @@ function renderDashboard(){
 
 const COLONNE = [
   {key:'nome', label:'Agente'},
-  {key:'nuoviQualificati', label:'Nuovi', num:true},
-  {key:'persiCount', label:'Persi', num:true},
+  {key:'nuoviNettiCount', label:'Nuovi (12 mesi)', num:true},
+  {key:'persiNettiCount', label:'Persi (12 mesi)', num:true},
   {key:'saldoNetto', label:'Saldo netto', num:true},
   {key:'totPremiAttivazione', label:'Premi attiv.', num:true},
   {key:'totGettoni', label:'Prestige', num:true},
@@ -731,7 +820,10 @@ function renderTable(){
 
   head.innerHTML = COLONNE.map(c=>{
     const arrow = STATE.sortCol===c.key ? (STATE.sortDir==='desc'?' ↓':' ↑') : '';
-    return `<th onclick="ordinaPer('${c.key}')">${c.label}${arrow}</th>`;
+    const titolo = (c.key==='nuoviNettiCount'||c.key==='persiNettiCount'||c.key==='saldoNetto')
+      ? ` title="Calcolato sui ${STATE.parametri.finestraMesi} mesi terminanti a ${p_meseLungo(STATE.parametri.periodoFine)}, non solo sul periodo campagna"`
+      : '';
+    return `<th onclick="ordinaPer('${c.key}')"${titolo}>${c.label}${arrow}</th>`;
   }).join('');
 
   let rows = STATE.risultati.slice();
@@ -754,11 +846,12 @@ function renderTable(){
   body.innerHTML = rows.map(r=>{
     const saldoClass = r.saldoNetto>0?'saldo-pos':(r.saldoNetto<0?'saldo-neg':'saldo-zero');
     const dotClass = r.saldoNetto>0?'dot-pos':(r.saldoNetto<0?'dot-neg':'dot-zero');
+    const rowClass = r.saldoNetto>0?'row-pos':(r.saldoNetto<0?'row-neg':'row-zero');
     return `
-      <tr onclick="apriDettaglioAgente('${r.codAge.replace(/'/g,"\\'")}')">
+      <tr class="${rowClass}" onclick="apriDettaglioAgente('${r.codAge.replace(/'/g,"\\'")}')">
         <td>${r.nome}</td>
-        <td class="num">${r.nuoviQualificati}</td>
-        <td class="num">${r.persiCount}</td>
+        <td class="num">${r.nuoviNettiCount}</td>
+        <td class="num">${r.persiNettiCount}</td>
         <td class="num"><span class="saldo-badge ${saldoClass}"><span class="dot ${dotClass}"></span>${r.saldoNetto>0?'+':''}${r.saldoNetto}</span></td>
         <td class="num">${fmt(r.totPremiAttivazione)}</td>
         <td class="num">${fmt(r.totGettoni)}</td>
@@ -806,15 +899,28 @@ function apriDettaglioAgente(codAge){
     </div>
   `).join('') || '<div class="empty-note">Nessun gettone prestige nel periodo.</div>';
 
-  const eventiPersi = ag.persi.slice().sort((a,b)=>b.ultimoAcquisto-a.ultimoAcquisto).map(p=>`
+  const eventiPersi = ag.persiNetti.slice().sort((a,b)=>b.ultimoAcquisto-a.ultimoAcquisto).map(p=>`
     <div class="event-row">
       <div class="ev-left">
         <span class="ev-cli">${nomeCliente(p.codCli)}<span class="ev-code">#${p.codCli}</span></span>
-        <span class="ev-meta">ultimo acquisto ${meseLabel(p.ultimoAcquisto)} · fermo da ${p.mesiDormienza} mesi</span>
+        <span class="ev-meta">ultimo acquisto ${meseLabel(p.ultimoAcquisto)}</span>
       </div>
       <span class="event-tag tag-perso">Perso</span>
     </div>
-  `).join('') || '<div class="empty-note">Nessun cliente perso nel periodo.</div>';
+  `).join('') || '<div class="empty-note">Nessun cliente perso in questa finestra.</div>';
+
+  const eventiNuoviNetti = ag.nuoviNetti.slice().sort((a,b)=>b.monthIndex-a.monthIndex).map(n=>`
+    <div class="event-row">
+      <div class="ev-left">
+        <span class="ev-cli">${nomeCliente(n.codCli)}<span class="ev-code">#${n.codCli}</span></span>
+        <span class="ev-meta">primo ordine in finestra: ${meseLabel(n.monthIndex)}</span>
+      </div>
+      <span class="event-tag tag-attivazione">Nuovo netto</span>
+    </div>
+  `).join('') || '<div class="empty-note">Nessun cliente nuovo in questa finestra.</div>';
+
+  const p = STATE.parametri;
+  const notaOrologio2 = `Confronta i ${p.finestraMesi} mesi terminanti a ${p_meseLungo(p.periodoFine)} con i ${p.finestraMesi} mesi precedenti — sempre così, indipendentemente dall'inizio del periodo campagna scelto sopra. Può includere clienti il cui ultimo/primo ordine cade fuori dal periodo campagna.`;
 
   document.getElementById('modalRoot').innerHTML = `
     <div class="overlay" onclick="if(event.target===this) chiudiModale()">
@@ -828,7 +934,7 @@ function apriDettaglioAgente(codAge){
         </div>
         <div class="modal-body">
           <div class="modal-section">
-            <h4>Nuove attivazioni (${ag.attivazioni.length})</h4>
+            <h4>Nuove attivazioni qualificate — premio a scala (${ag.attivazioni.length})</h4>
             ${eventiAttivazione}
           </div>
           <div class="modal-section">
@@ -836,7 +942,11 @@ function apriDettaglioAgente(codAge){
             ${eventiGettone}
           </div>
           <div class="modal-section">
-            <h4>Clienti persi (${ag.persi.length}) — saldo netto ${ag.saldoNetto>0?'+':''}${ag.saldoNetto}</h4>
+            <h4>Saldo netto annuo — per la retention (saldo ${ag.saldoNetto>0?'+':''}${ag.saldoNetto})</h4>
+            <p style="font-size:12px;color:var(--testo-mut);margin:-4px 0 12px;">${notaOrologio2}</p>
+            <div style="font-size:12px;font-weight:700;color:var(--verde-testo);text-transform:uppercase;letter-spacing:.03em;margin-bottom:8px;">Nuovi netti (${ag.nuoviNetti.length})</div>
+            ${eventiNuoviNetti}
+            <div style="font-size:12px;font-weight:700;color:var(--rosso-tenue);text-transform:uppercase;letter-spacing:.03em;margin:16px 0 8px;">Persi netti (${ag.persiNetti.length})</div>
             ${eventiPersi}
           </div>
           <div class="modal-total">
@@ -872,31 +982,49 @@ function apriParametri(){
         </div>
         <div class="modal-body">
           <div class="param-grid">
+            <div class="param-divider">Periodo campagna — per attivazioni e gettoni prestige (Orologio 1)</div>
+            <div class="param-field" style="grid-column:1/-1;">
+              <span class="hint" style="font-size:11.5px;">Il periodo campagna (data inizio/fine) si sceglie nella dashboard, sopra la tabella. Qui sotto solo i valori €/soglie che lo riguardano.</span>
+            </div>
             <div class="param-divider">Premio attivazione a scala</div>
             <div class="param-field"><label>3 referenze (€)</label><input type="number" id="p_premio3" value="${p.premio3}"></div>
             <div class="param-field"><label>4 referenze (€)</label><input type="number" id="p_premio4" value="${p.premio4}"></div>
             <div class="param-field"><label>5+ referenze (€)</label><input type="number" id="p_premio5" value="${p.premio5}"></div>
             <div class="param-field"><label>Referenze minime per qualificare</label><input type="number" id="p_referenzeMinime" value="${p.referenzeMinime}"></div>
-
-            <div class="param-divider">Gettone prestige &amp; retention</div>
-            <div class="param-field"><label>Gettone EBB/Parosé (€)</label><input type="number" id="p_gettonePrestige" value="${p.gettonePrestige}"></div>
-            <div class="param-field"><label>Retention per cliente netto (€)</label><input type="number" id="p_retentionValore" value="${p.retentionValore}"></div>
-
-            <div class="param-divider">Regole di qualificazione</div>
             <div class="param-field">
               <label>Casse minime per referenza valida</label>
               <input type="number" id="p_casseMinimePerReferenza" value="${p.casseMinimePerReferenza}">
               <span class="hint">1 cassa = 6 bottiglie</span>
             </div>
             <div class="param-field">
-              <label>Finestra cliente nuovo/perso (mesi)</label>
-              <input type="number" id="p_finestraMesi" value="${p.finestraMesi}">
-            </div>
-            <div class="param-field">
               <label>Ordine minimo per qualificare (casse totali)</label>
               <input type="number" id="p_ordineMinimoCasse" value="${p.ordineMinimoCasse}">
               <span class="hint">Default 8 = 7 pagate + 1 omaggio (7+1)</span>
             </div>
+            <div class="param-field">
+              <label>Finestra "cliente nuovo" per l'attivazione (mesi)</label>
+              <input type="number" id="p_finestraMesi" value="${p.finestraMesi}">
+              <span class="hint">Nessun acquisto nei mesi precedenti al primo ordine in periodo</span>
+            </div>
+
+            <div class="param-divider">Gettone prestige</div>
+            <div class="param-field"><label>Gettone EBB/Parosé (€)</label><input type="number" id="p_gettonePrestige" value="${p.gettonePrestige}"></div>
+
+            <div class="param-divider">Finestra saldo netto — per la retention (Orologio 2)</div>
+            <div class="param-field" style="grid-column:1/-1;">
+              <span class="hint" style="font-size:11.5px;">
+                <b style="color:var(--verde-testo);">Non è legata al periodo campagna scelto sopra.</b> Il saldo netto guarda
+                sempre i mesi pieni indicati qui sotto, terminando esattamente alla data di fine del periodo campagna —
+                così un cliente HORECA con ciclo di riordino più lungo dei mesi di campagna (es. 3-4 mesi) non viene
+                marcato "perso" solo perché non gli è capitato di riordinare proprio dentro quella finestra corta.
+              </span>
+            </div>
+            <div class="param-field">
+              <label>Ampiezza finestra saldo netto (mesi)</label>
+              <input type="number" id="p_finestraMesiDisplay" value="${p.finestraMesi}" disabled style="opacity:.6;">
+              <span class="hint">Condivisa con la finestra "cliente nuovo" qui sopra — modificala lì, si applica a entrambe</span>
+            </div>
+            <div class="param-field"><label>Retention per cliente netto (€)</label><input type="number" id="p_retentionValore" value="${p.retentionValore}"></div>
           </div>
           <div style="display:flex;justify-content:space-between;margin-top:22px;">
             <button class="btn btn-ghost btn-sm" onclick="ripristinaDefault()">Ripristina valori di default</button>
@@ -935,9 +1063,10 @@ function esportaExcel(){
   const p = STATE.parametri;
   const righeTabella = STATE.risultati.slice().sort((a,b)=>b.totale-a.totale).map(r=>({
     'Agente': r.nome,
-    'Nuovi clienti qualificati': r.nuoviQualificati,
-    'Clienti persi': r.persiCount,
-    'Saldo netto': r.saldoNetto,
+    'Attivazioni qualificate (premio)': r.nuoviQualificati,
+    'Nuovi netti (12 mesi, per retention)': r.nuoviNettiCount,
+    'Persi netti (12 mesi, per retention)': r.persiNettiCount,
+    'Saldo netto (12 mesi)': r.saldoNetto,
     'Premi attivazione (€)': Math.round(r.totPremiAttivazione),
     'Gettoni prestige (€)': Math.round(r.totGettoni),
     'Retention (€)': Math.round(r.retention),
@@ -946,9 +1075,10 @@ function esportaExcel(){
 
   const totRow = {
     'Agente': 'TOTALE RETE',
-    'Nuovi clienti qualificati': STATE.risultati.reduce((s,a)=>s+a.nuoviQualificati,0),
-    'Clienti persi': STATE.risultati.reduce((s,a)=>s+a.persiCount,0),
-    'Saldo netto': STATE.risultati.reduce((s,a)=>s+a.saldoNetto,0),
+    'Attivazioni qualificate (premio)': STATE.risultati.reduce((s,a)=>s+a.nuoviQualificati,0),
+    'Nuovi netti (12 mesi, per retention)': STATE.risultati.reduce((s,a)=>s+a.nuoviNettiCount,0),
+    'Persi netti (12 mesi, per retention)': STATE.risultati.reduce((s,a)=>s+a.persiNettiCount,0),
+    'Saldo netto (12 mesi)': STATE.risultati.reduce((s,a)=>s+a.saldoNetto,0),
     'Premi attivazione (€)': Math.round(STATE.risultati.reduce((s,a)=>s+a.totPremiAttivazione,0)),
     'Gettoni prestige (€)': Math.round(STATE.risultati.reduce((s,a)=>s+a.totGettoni,0)),
     'Retention (€)': Math.round(STATE.risultati.reduce((s,a)=>s+a.retention,0)),
@@ -957,7 +1087,8 @@ function esportaExcel(){
   righeTabella.push(totRow);
 
   const parametriRighe = [
-    {Parametro:'Periodo campagna', Valore: p.periodoInizio + ' → ' + p.periodoFine},
+    {Parametro:'Periodo campagna (attivazioni + gettoni) — Orologio 1', Valore: p.periodoInizio + ' → ' + p.periodoFine},
+    {Parametro:'Finestra saldo netto (retention) — Orologio 2', Valore: p.finestraMesi + ' mesi terminanti a ' + p.periodoFine + ', confrontati coi ' + p.finestraMesi + ' mesi precedenti — indipendente dall\'inizio periodo campagna'},
     {Parametro:'Premio 3 referenze', Valore: p.premio3 + ' €'},
     {Parametro:'Premio 4 referenze', Valore: p.premio4 + ' €'},
     {Parametro:'Premio 5+ referenze', Valore: p.premio5 + ' €'},
@@ -965,7 +1096,7 @@ function esportaExcel(){
     {Parametro:'Retention per cliente netto', Valore: p.retentionValore + ' €'},
     {Parametro:'Referenze minime per qualificare', Valore: p.referenzeMinime},
     {Parametro:'Casse minime per referenza valida', Valore: p.casseMinimePerReferenza},
-    {Parametro:'Finestra cliente nuovo/perso (mesi)', Valore: p.finestraMesi},
+    {Parametro:'Finestra "cliente nuovo" per attivazione (mesi)', Valore: p.finestraMesi},
     {Parametro:'Ordine minimo per qualificare (casse totali)', Valore: p.ordineMinimoCasse},
     {Parametro:'Data/ora esportazione', Valore: new Date().toLocaleString('it-IT')}
   ];
@@ -986,6 +1117,7 @@ function esportaExcel(){
 function salvaLocale(){
   try{
     localStorage.setItem(LS_KEY, JSON.stringify({
+      schemaVersion: SCHEMA_VERSION,
       rows: STATE.rows, importReport: STATE.importReport,
       parametri: STATE.parametri, savedAt: new Date().toISOString()
     }));
@@ -1017,9 +1149,27 @@ function avvia(){
 
   const salvato = caricaLocale();
   if(salvato && salvato.rows && salvato.rows.length>0){
-    window.__sessioneSalvata = salvato; // evita di iniettare JSON enorme in un attributo HTML
     const wrap = document.getElementById('importReportWrap');
     const dataSalvataggio = new Date(salvato.savedAt).toLocaleString('it-IT');
+
+    if(salvato.schemaVersion !== SCHEMA_VERSION){
+      // Salvataggio di una versione precedente dell'app: puo' mancare di campi nuovi
+      // (es. nome cliente). Meglio avvisare e far rifare l'import che rischiare dati incompleti.
+      const banner = document.createElement('div');
+      banner.className = 'import-report';
+      banner.innerHTML = `
+        <h3>Trovato un salvataggio precedente non aggiornato</h3>
+        <p style="font-size:13px;color:var(--testo-mut);margin:0 0 14px;">
+          Risale al ${dataSalvataggio}, ma è stato creato con una versione precedente dell'app
+          (potrebbero mancare dati come il nome cliente). Rifai l'import del file Excel per aggiornarlo:
+          verrà sovrascritto automaticamente al prossimo import.
+        </p>
+      `;
+      wrap.prepend(banner);
+      return;
+    }
+
+    window.__sessioneSalvata = salvato; // evita di iniettare JSON enorme in un attributo HTML
     const banner = document.createElement('div');
     banner.className = 'import-report';
     banner.innerHTML = `
