@@ -7,18 +7,15 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 :root{
-  --verde-vivo:#5a6b3a;        /* oliva — accento positivo (bottoni, badge saldo+) */
-  --verde-vivo-dark:#46542c;
-  --verde-scuro:#241c16;       /* inchiostro — titoli ed enfasi */
-  --verde-testo:#4c5a30;       /* testo su tint oliva */
-  --verde-tint:#eaeedd;        /* tint oliva chiaro */
-  --verde-tint2:#dde3c7;
-  --oro:#a9822e;               /* oro — prestige */
-  --oro-tint:#f5ecd6;
-  --rosso-tenue:#6b1f2a;       /* bordeaux — negativo/danger + accento brand */
-  --rosso-tint:#f3e2e0;
-  --bordeaux:#6b1f2a;
+  --bordeaux:#6b1f2a;          /* accento primario — bottoni, brand, negativo, numeri chiave */
   --bordeaux-dark:#4f1620;
+  --rosso-tenue:#6b1f2a;       /* alias di bordeaux, usato per gli stati negativi */
+  --oro:#a9822e;               /* accento secondario — positivo (saldo+) e prestige */
+  --oro-dark:#7a5c0a;          /* oro scuro — testo su tint oro */
+  --oro-tint:#f5ecd6;          /* tint oro chiaro */
+  --oro-tint2:#efe0bb;         /* tint oro medio — badge/righe positive */
+  --rosso-tint:#f3e2e0;        /* tint bordeaux chiaro — badge/righe negative */
+  --verde-scuro:#241c16;       /* inchiostro — titoli ed enfasi (nome storico, ora = inchiostro) */
   --crema:#efe9de;             /* pergamena — sfondo pagina */
   --carta:#fbf9f4;             /* crema chiaro — card */
   --bordo:#e2d9c4;             /* hairline pergamena */
@@ -67,10 +64,10 @@ button{font-family:inherit;cursor:pointer;border:none;}
   display:inline-flex;align-items:center;gap:6px;transition:transform .12s ease, box-shadow .12s ease;
 }
 .btn:active{transform:scale(.97);}
-.btn-primary{background:var(--verde-vivo);color:#fff;box-shadow:0 4px 14px -4px rgba(90,107,58,.45);}
-.btn-primary:hover{background:var(--verde-vivo-dark);}
-.btn-ghost{background:var(--carta);color:var(--verde-testo);border:1px solid var(--bordo);}
-.btn-ghost:hover{border-color:var(--verde-vivo);}
+.btn-primary{background:var(--bordeaux);color:#fff;box-shadow:0 4px 14px -4px rgba(107,31,42,.4);}
+.btn-primary:hover{background:var(--bordeaux-dark);}
+.btn-ghost{background:var(--carta);color:var(--verde-scuro);border:1px solid var(--bordo);}
+.btn-ghost:hover{border-color:var(--bordeaux);}
 .btn-sm{padding:7px 12px;font-size:12.5px;}
 .btn-danger-ghost{background:var(--carta);color:var(--rosso-tenue);border:1px solid #e6cac5;}
 
@@ -80,7 +77,7 @@ button{font-family:inherit;cursor:pointer;border:none;}
   width:100%;max-width:640px;border:2px dashed #d9c9ae;border-radius:var(--raggio);
   background:var(--carta);padding:56px 32px;transition:.15s;
 }
-.dropzone.drag{border-color:var(--verde-vivo);background:var(--verde-tint);}
+.dropzone.drag{border-color:var(--bordeaux);background:var(--rosso-tint);}
 .dropzone-icon{font-size:44px;margin-bottom:10px;}
 .dropzone h2{margin:0 0 8px;font-size:23px;color:var(--verde-scuro);}
 .dropzone p{color:var(--testo-mut);font-size:14px;margin:0 0 20px;}
@@ -92,8 +89,8 @@ button{font-family:inherit;cursor:pointer;border:none;}
 }
 .import-report h3{margin:0 0 12px;font-size:15px;color:var(--verde-scuro);}
 .import-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px;}
-.import-stat{background:var(--verde-tint);border-radius:var(--raggio-sm);padding:12px;text-align:center;}
-.import-stat b{display:block;font-size:20px;color:var(--verde-testo);font-family:var(--font-mono);}
+.import-stat{background:var(--header-bg);border-radius:var(--raggio-sm);padding:12px;text-align:center;}
+.import-stat b{display:block;font-size:20px;color:var(--bordeaux);font-family:var(--font-mono);}
 .import-stat span{font-size:11px;color:var(--testo-mut);}
 .import-warn{font-size:12.5px;color:var(--testo-mut);background:#f7f7f2;border-radius:8px;padding:10px 12px;margin-top:6px;}
 .import-warn b{color:var(--rosso-tenue);}
@@ -105,7 +102,7 @@ button{font-family:inherit;cursor:pointer;border:none;}
   padding:8px 14px;border-radius:999px;font-size:13px;flex-wrap:wrap;
 }
 .periodo-pill select{
-  border:none;font-family:inherit;font-size:13px;color:var(--verde-testo);font-weight:600;background:transparent;
+  border:none;font-family:var(--font-mono);font-size:13px;color:var(--verde-scuro);font-weight:600;background:transparent;
   -webkit-appearance:none;appearance:none;cursor:pointer;padding:2px 4px;
 }
 .periodo-pill select:focus{outline:none;}
@@ -139,25 +136,25 @@ thead th{
   font-weight:600;font-size:11.5px;text-transform:uppercase;letter-spacing:.03em;cursor:pointer;white-space:nowrap;
   position:sticky;top:0;border-bottom:2px solid var(--bordeaux);
 }
-thead th:hover{color:var(--verde-testo);}
+thead th:hover{color:var(--bordeaux);}
 tbody tr{border-top:1px solid var(--bordo);border-left:3px solid transparent;cursor:pointer;transition:background .1s;}
-tbody tr.row-pos{border-left-color:var(--verde-vivo);}
+tbody tr.row-pos{border-left-color:var(--oro);}
 tbody tr.row-neg{border-left-color:var(--bordeaux);}
 tbody tr.row-zero{border-left-color:#cbc3ab;}
-tbody tr:hover{background:var(--verde-tint);}
+tbody tr:hover{background:var(--header-bg);}
 tbody td{padding:11px 14px;}
 tbody td:first-child{font-weight:500;}
 .num{text-align:right;font-variant-numeric:tabular-nums;font-family:var(--font-mono);}
-.tot-cell{font-weight:600;color:var(--verde-testo);}
+.tot-cell{font-weight:600;color:var(--bordeaux);}
 .saldo-badge{
   display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:999px;font-size:12px;font-weight:600;
   font-family:var(--font-mono);
 }
-.saldo-pos{background:var(--verde-tint2);color:var(--verde-testo);}
+.saldo-pos{background:var(--oro-tint2);color:var(--oro-dark);}
 .saldo-neg{background:var(--rosso-tint);color:var(--rosso-tenue);}
 .saldo-zero{background:#f1ede1;color:var(--testo-mut);}
 .dot{width:7px;height:7px;border-radius:50%;display:inline-block;}
-.dot-pos{background:var(--verde-vivo);}
+.dot-pos{background:var(--oro);}
 .dot-neg{background:var(--rosso-tenue);}
 .dot-zero{background:#cbc3ab;}
 
@@ -170,7 +167,7 @@ tbody td:first-child{font-weight:500;}
 .modal-header{display:flex;align-items:flex-start;justify-content:space-between;padding:24px 26px 16px;border-bottom:1px solid var(--bordo);}
 .modal-header h2{margin:0;font-size:21px;color:var(--verde-scuro);}
 .modal-header p{margin:4px 0 0;font-size:13px;color:var(--testo-mut);}
-.modal-close{background:var(--verde-tint);color:var(--verde-testo);width:32px;height:32px;border-radius:50%;font-size:16px;}
+.modal-close{background:var(--header-bg);color:var(--verde-scuro);width:32px;height:32px;border-radius:50%;font-size:16px;}
 .modal-body{padding:20px 26px 26px;max-height:70vh;overflow-y:auto;}
 .modal-section{margin-bottom:22px;}
 .modal-section h4{font-size:12.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--testo-mut);margin:0 0 10px;}
@@ -180,7 +177,7 @@ tbody td:first-child{font-weight:500;}
 .ev-code{font-weight:400;color:var(--testo-mut);font-size:11px;margin-left:5px;font-family:var(--font-mono);}
 .event-row .ev-meta{font-size:11.5px;color:var(--testo-mut);}
 .event-tag{font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:5px;text-transform:uppercase;letter-spacing:.03em;}
-.tag-attivazione{background:var(--verde-tint2);color:var(--verde-testo);}
+.tag-attivazione{background:var(--oro-tint2);color:var(--oro-dark);}
 .tag-gettone{background:var(--oro-tint);color:var(--oro);}
 .tag-perso{background:var(--rosso-tint);color:var(--rosso-tenue);}
 .ev-value{font-weight:600;font-variant-numeric:tabular-nums;font-family:var(--font-mono);}
@@ -200,7 +197,7 @@ tbody td:first-child{font-weight:500;}
   border:1px solid var(--bordo);border-radius:8px;padding:9px 11px;font-family:var(--font-mono);font-size:14px;
   background:var(--crema);
 }
-.param-field input:focus{outline:none;border-color:var(--verde-vivo);background:#fff;}
+.param-field input:focus{outline:none;border-color:var(--bordeaux);background:#fff;}
 .param-divider{grid-column:1/-1;border-top:1px solid var(--bordo);margin:6px 0;padding-top:10px;font-size:12px;font-weight:700;color:var(--bordeaux);text-transform:uppercase;letter-spacing:.03em;}
 
 .footer-note{text-align:center;color:var(--testo-mut);font-size:11.5px;margin-top:36px;}
@@ -762,7 +759,7 @@ function renderDashboard(){
       </div>
       <div class="card">
         <div class="card-label">Premi attivazione</div>
-        <div class="card-value" style="color:var(--verde-testo)">${fmt(totAttivazione)}</div>
+        <div class="card-value" style="color:var(--bordeaux)">${fmt(totAttivazione)}</div>
       </div>
       <div class="card">
         <div class="card-label">Gettoni prestige</div>
@@ -770,7 +767,7 @@ function renderDashboard(){
       </div>
       <div class="card">
         <div class="card-label">Retention</div>
-        <div class="card-value" style="color:var(--verde-testo)">${fmt(totRetention)}</div>
+        <div class="card-value" style="color:var(--oro-dark)">${fmt(totRetention)}</div>
       </div>
     </div>
 
@@ -944,7 +941,7 @@ function apriDettaglioAgente(codAge){
           <div class="modal-section">
             <h4>Saldo netto annuo — per la retention (saldo ${ag.saldoNetto>0?'+':''}${ag.saldoNetto})</h4>
             <p style="font-size:12px;color:var(--testo-mut);margin:-4px 0 12px;">${notaOrologio2}</p>
-            <div style="font-size:12px;font-weight:700;color:var(--verde-testo);text-transform:uppercase;letter-spacing:.03em;margin-bottom:8px;">Nuovi netti (${ag.nuoviNetti.length})</div>
+            <div style="font-size:12px;font-weight:700;color:var(--oro-dark);text-transform:uppercase;letter-spacing:.03em;margin-bottom:8px;">Nuovi netti (${ag.nuoviNetti.length})</div>
             ${eventiNuoviNetti}
             <div style="font-size:12px;font-weight:700;color:var(--rosso-tenue);text-transform:uppercase;letter-spacing:.03em;margin:16px 0 8px;">Persi netti (${ag.persiNetti.length})</div>
             ${eventiPersi}
@@ -1013,7 +1010,7 @@ function apriParametri(){
             <div class="param-divider">Finestra saldo netto — per la retention (Orologio 2)</div>
             <div class="param-field" style="grid-column:1/-1;">
               <span class="hint" style="font-size:11.5px;">
-                <b style="color:var(--verde-testo);">Non è legata al periodo campagna scelto sopra.</b> Il saldo netto guarda
+                <b style="color:var(--bordeaux);">Non è legata al periodo campagna scelto sopra.</b> Il saldo netto guarda
                 sempre i mesi pieni indicati qui sotto, terminando esattamente alla data di fine del periodo campagna —
                 così un cliente HORECA con ciclo di riordino più lungo dei mesi di campagna (es. 3-4 mesi) non viene
                 marcato "perso" solo perché non gli è capitato di riordinare proprio dentro quella finestra corta.
